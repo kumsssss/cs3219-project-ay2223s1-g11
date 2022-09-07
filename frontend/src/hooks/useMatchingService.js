@@ -1,88 +1,98 @@
-import { useEffect, useState, useRef } from "react"
-import { io } from 'socket.io-client'
+import { useEffect, useState, useRef } from "react";
+import { io } from "socket.io-client";
 
-export const useMatchingService = ({enabled, onConnected, onDisconnected}) => {
-    const socketRef = useRef();
+export const useMatchingService = ({
+  enabled,
+  onConnected,
+  onDisconnected,
+}) => {
+  const socketRef = useRef();
 
-    // State can be simplified
-    const [matchState, setMatchState] = useState({
-        hasConnected: false,
+  // State can be simplified
+  const [matchState, setMatchState] = useState({
+    hasConnected: false,
+    isPending: false,
+    hasFailed: false,
+    isSuccess: false,
+    roomId: null,
+  });
+
+  const findMatch = (difficultyLevel) => {
+    socketRef.current.emit("findMatch", difficultyLevel);
+  };
+
+  const disconnect = () => {
+    socketRef.current.disconnect();
+  };
+
+  const updateOnConnected = () => {
+    setMatchState((prevState) => {
+      return { ...prevState, hasConnected: true };
+    });
+  };
+
+  const updateOnDisconnected = () => {
+    setMatchState((prevState) => {
+      return { ...prevState, hasConnected: false };
+    });
+  };
+
+  const updateOnMatchSuccess = (roomId) => {
+    setMatchState((prevState) => {
+      return {
+        ...prevState,
         isPending: false,
+        isSuccess: true,
         hasFailed: false,
+        roomId,
+      };
+    });
+  };
+
+  const updateOnMatchFail = () => {
+    setMatchState((prevState) => {
+      return {
+        ...prevState,
+        isPending: false,
         isSuccess: false,
-        roomId: null
-    })
-    
+        hasFailed: true,
+      };
+    });
+  };
 
-    const findMatch = (difficultyLevel) => {
-        console.log("FFFFF")
-        socketRef.current.emit('findMatch', difficultyLevel)
+  useEffect(() => {
+    if (!enabled) {
+      return;
     }
 
-    const disconnect = () => {
-        console.log("HELLLO")
-        socketRef.current.disconnect();
-    }
+    const socket = io("localhost:8001");
 
-    const updateOnConnected = () => {
-        setMatchState(prevState => {
-            return {...prevState, hasConnected: true }
-        })
-    }
+    socket.on("connected", () => {
+      updateOnConnected();
+      if (onConnected) {
+        onConnected();
+      }
+    });
 
-    const updateOnDisconnected = () => {
-        setMatchState(prevState => {
-            return {...prevState, hasConnected: false }
-        })
-    }
+    socket.on("disconnect", () => {
+      updateOnDisconnected();
+      if (onDisconnected) {
+        onDisconnected();
+      }
+    });
 
-    const updateOnMatchSuccess = (roomId) => {
-        setMatchState(prevState => {
-            return {...prevState, isPending: false, isSuccess: true, hasFailed: false, roomId }
-        })
-    }
+    socket.on("matchSuccess", (roomId) => {
+      updateOnMatchSuccess(roomId);
+    });
 
-    const updateOnMatchFail = () => {
-        setMatchState(prevState => {
-            return {...prevState, isPending: false, isSuccess: false, hasFailed: true }
-        })
-    }
+    socket.on("matchFail", () => {
+      updateOnMatchFail();
+    });
 
+    socketRef.current = socket;
 
-    useEffect(() => {
-        if (!enabled) {
-            return;
-        }
-        
-        const socket = io("localhost:8001")
+    return () => socket.disconnect();
+  }, [enabled, onConnected, onDisconnected]);
 
-        socket.on('connected', () => {
-            updateOnConnected()
-            if (onConnected) {
-                onConnected();
-            }
-        })
-
-        socket.on('disconnect', () => {
-            updateOnDisconnected();
-           if (onDisconnected) {
-                onDisconnected();
-           }
-        });
-      
-        socket.on('matchSuccess', (roomId) => {
-            updateOnMatchSuccess(roomId);
-        })
-
-        socket.on('matchFail', () => {
-            updateOnMatchFail();
-        })
-        
-        socketRef.current = socket;
-
-        return () => socket.disconnect();
-
-    }, [enabled, onConnected, onDisconnected])
-
-    return { findMatch, disconnect, matchState };
-}
+  return { findMatch, disconnect, matchState };
+};
