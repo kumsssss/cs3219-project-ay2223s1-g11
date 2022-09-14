@@ -15,10 +15,11 @@ export const useMatchingService = ({
     hasFailed: false,
     isSuccess: false,
     roomId: null,
+    error: null
   });
 
-  const findMatch = (difficultyLevel) => {
-    socketRef.current.emit("findMatch", difficultyLevel);
+  const findMatch = ({username, difficultyLevel}) => {
+    socketRef.current.emit("findMatch", {username, difficultyLevel});
   };
 
   const disconnect = () => {
@@ -49,13 +50,14 @@ export const useMatchingService = ({
     });
   };
 
-  const updateOnMatchFail = () => {
+  const updateOnMatchFail = (error) => {
     setMatchState((prevState) => {
       return {
         ...prevState,
         isPending: false,
         isSuccess: false,
         hasFailed: true,
+        error,
       };
     });
   };
@@ -81,12 +83,12 @@ export const useMatchingService = ({
       }
     });
 
-    socket.on("matchSuccess", (roomId) => {
+    socket.on("matchSuccess", ({roomId}) => {
       updateOnMatchSuccess(roomId);
     });
 
-    socket.on("matchFail", () => {
-      updateOnMatchFail();
+    socket.on("matchFail", ({error}) => {
+      updateOnMatchFail(error);
     });
 
     socketRef.current = socket;

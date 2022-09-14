@@ -2,10 +2,14 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "./repository.js";
 
 export const PendingMatch = sequelize.define("PendingMatch", {
-  socketId: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
+  },
+  socketId: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   difficultyLevel: {
     type: DataTypes.ENUM,

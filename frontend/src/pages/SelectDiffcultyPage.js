@@ -10,7 +10,7 @@ const SelectDiffcultyPage = () => {
   // For testing
   useEffect(() => {
     if (!user) {
-      setUser({ hasSelectedDifficulty: false, difficultyLevel: null });
+      setUser({ username: "david", hasSelectedDifficulty: false, difficultyLevel: null });
     }
   });
 

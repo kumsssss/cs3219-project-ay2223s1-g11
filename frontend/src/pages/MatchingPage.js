@@ -6,7 +6,7 @@ import { UserContext } from "../contexts/UserContext";
 import { useMatchingService } from "../hooks/useMatchingService";
 
 // The countdown timer interval in seconds
-const SECONDS = 1;
+const TIMER_INTERVAL = 5;
 
 const MatchingPage = () => {
   const navigate = useNavigate();
@@ -16,14 +16,14 @@ const MatchingPage = () => {
   const { user, setUser } = useContext(UserContext);
   const [timer, setTimer] = useState({ hasFinished: false, isRendered: true });
 
-  // Runs when the component unmonts
+  // Runs when the component unmounts
   useEffect(() => {
     return disconnect;
   }, []);
 
   useEffect(() => {
     if (user && !matchState.isPending) {
-      findMatch(user.difficultyLevel);
+      findMatch({username: user.username, difficultyLevel: user.difficultyLevel});
     }
   }, [user]);
 
@@ -54,7 +54,7 @@ const MatchingPage = () => {
       Hello
       {timer.isRendered && (
         <CountdownTimer
-          interval={SECONDS}
+          interval={TIMER_INTERVAL}
           handleFinishedTimer={handleTimeout}
           callback={stopRenderingTimer}
         />
