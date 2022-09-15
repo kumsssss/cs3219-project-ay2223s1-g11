@@ -1,7 +1,11 @@
 import sequelize from "sequelize";
 import { PendingMatch } from "./pending-match-model.js";
 
-export const ormCreatePendingMatch = async (username, socketId, difficultyLevel) => {
+export const ormCreatePendingMatch = async (
+  username,
+  socketId,
+  difficultyLevel
+) => {
   try {
     const newPendingMatch = await new PendingMatch({
       username,

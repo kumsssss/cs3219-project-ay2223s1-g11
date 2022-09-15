@@ -5,7 +5,7 @@ import {
 } from "../model/pending-match-orm.js";
 
 // Expressed in milliseconds
-export const TIMEOUT_INTERVAL = 5000
+export const TIMEOUT_INTERVAL = 5000;
 
 /**
  * Handles the logic of matching users.
@@ -13,12 +13,19 @@ export const TIMEOUT_INTERVAL = 5000
 export const matchController = (io, socket) => {
   console.log(`IO: Socket with id: ${socket.id} connected`);
 
-  socket.on("findMatch", async ({username, difficultyLevel}) => {
-
-    const {hasFoundMatch, partnerUsername, partnerSocketId} = await findMatch(difficultyLevel);
+  socket.on("findMatch", async ({ username, difficultyLevel }) => {
+    const { hasFoundMatch, partnerUsername, partnerSocketId } = await findMatch(
+      difficultyLevel
+    );
 
     if (hasFoundMatch) {
-      await handleMatchSuccess(io, socket, username, partnerUsername, partnerSocketId);
+      await handleMatchSuccess(
+        io,
+        socket,
+        username,
+        partnerUsername,
+        partnerSocketId
+      );
       return;
     }
     await createPendingMatch(username, socket.id, difficultyLevel);
@@ -56,7 +63,11 @@ const findMatch = async (difficultyLevel) => {
       return { hasFoundMatch: false };
     }
     console.log(match);
-    return { hasFoundMatch: true, partnerUsername: match.dataValues.username, partnerSocketId: match.dataValues.socketId };
+    return {
+      hasFoundMatch: true,
+      partnerUsername: match.dataValues.username,
+      partnerSocketId: match.dataValues.socketId,
+    };
   } catch (err) {
     console.log(err);
   }
@@ -66,18 +77,30 @@ const createRoomId = (socketIdOne, socketIdTwo) => {
   return `${socketIdOne}:${socketIdTwo}`;
 };
 
-const handleMatchSuccess = async (io, socket, username, partnerUsername, partnerSocketId) => {
+const handleMatchSuccess = async (
+  io,
+  socket,
+  username,
+  partnerUsername,
+  partnerSocketId
+) => {
   // handleMatchSuccess is delt by the aspect of the second user who request a match
   await deletePendingMatch(partnerUsername);
 
   const roomId = createRoomId(socket.id, partnerSocketId);
-  io.to(socket.id).emit("matchSuccess", {partnerUsername: partnerUsername, roomId});
-  io.to(partnerSocketId).emit("matchSuccess", {partnerUsername: username, roomId});
-}
+  io.to(socket.id).emit("matchSuccess", {
+    partnerUsername: partnerUsername,
+    roomId,
+  });
+  io.to(partnerSocketId).emit("matchSuccess", {
+    partnerUsername: username,
+    roomId,
+  });
+};
 
 const handleMatchFail = async (io, socket, username) => {
   setTimeout(async () => {
     await deletePendingMatch(username);
-    io.to(socket.id).emit("matchFail", {error: "Timeout"});
-  }, TIMEOUT_INTERVAL)
-}
+    io.to(socket.id).emit("matchFail", { error: "Timeout" });
+  }, TIMEOUT_INTERVAL);
+};
