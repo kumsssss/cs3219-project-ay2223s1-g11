@@ -1,5 +1,4 @@
-import userModel from '../model/user-model.js';
-import { ormCreateUser as _createUser, ormDoesUsernameExist as _doesUsernameExist} from '../model/user-orm.js'
+import { ormCreateUser as _createUser, ormDoesUsernameExist as _doesUsernameExist, ormGetUser as _getUser} from '../model/user-orm.js'
 import {expireToken, getToken, setToken} from '../redis/datastore.js'
 import {createToken, verifyToken} from '../auth/token.js'
 import 'dotenv/config'
@@ -15,7 +14,6 @@ export async function createUser(req, res) {
             }
             const encryptedPassword = await bcrypt.hash(password, `${process.env.SALT}` | 0);
             const resp = await _createUser(username, encryptedPassword);
-            console.log(resp);
             if (resp.err) {
                 return res.status(400).json({message: 'Could not create a new user!'});
             } else {
@@ -37,15 +35,16 @@ export async function loginUser(req, res) {
         if (!username || !password) {
             return res.status(400).json({message: 'Username and/or Password are missing!'})
         }
-        const user = await userModel.findOne({username: username})
-
+        const user = await _getUser(username) 
         if (!user) {
             return res.status(400).json({message: 'User does not exist!'})
         }
 
         const matchingPassword = await bcrypt.compare(password, user.password)
         if (matchingPassword) {
+            //create jwt token
             const token = createToken(username)
+            //set active jwt token in redis as key
             await setToken(token)
             return res.status(200).json({token: token})
         }
@@ -64,7 +63,7 @@ export async function changePassword(req, res) {
         if (!username || !currentPassword || !newPassword) {
             return res.status(400).json({message: 'Username and/or Passwords are missing!'})
         }
-        const user = await userModel.findOne({username: username})
+        const user = await _getUser(username)
         if (!user) {
             return res.status(400).json({message: "User does not exist!"})
         }
@@ -96,7 +95,7 @@ export async function deleteUser(req, res) {
         }
 
         const isValid = await verifyToken(token)
-        const user = await userModel.findOne({username: username})
+        const user = await _getUser(username)
         if (!isValid) {
             return res.status(401).json({message: "Unable to delete user! Token has expired"})
         }
@@ -117,8 +116,10 @@ export async function logoutUser(req, res) {
         if (!token) {
             return res.status(400).json({message: "Token is missing!"})
         }
+        // check if token is stored in redis
         const active = await getToken(token)
         if (active) {
+            // remove token from redis
             const deactivate = await expireToken(token)
             if (!deactivate) {
                 console.log("Unable to expire token")
@@ -134,16 +135,17 @@ export async function logoutUser(req, res) {
 export async function validateUserToken(req, res) {
     try {
         const token = req.headers.authorization;
-        console.log(token)
         if (!token) {
             return res.status(400).json({message: "Token is missing!"})
         }
+        // verify if jwt has not expired due to time limit
         const verified = verifyToken(token);
-        console.log(verified)
+        // verify that jwt token is present in redis which symbolises that user is logged in
         const active = await getToken(token)
         if (verified && active) {
             return res.status(200).json({message: "Successfully verified"});
-        } else {
+        } 
+        else {
             return res.status(401).json({message: "Token is invalid!"});
         }
     }
