@@ -1,5 +1,5 @@
 import userModel from '../model/user-model.js';
-import { ormCreateUser as _createUser } from '../model/user-orm.js'
+import { ormCreateUser as _createUser, ormDoesUsernameExist as _doesUsernameExist} from '../model/user-orm.js'
 import {expireToken, getToken, setToken} from '../redis/datastore.js'
 import {createToken, verifyToken} from '../auth/token.js'
 import 'dotenv/config'
@@ -9,6 +9,10 @@ export async function createUser(req, res) {
     try {
         const { username, password } = req.body;
         if (username && password) {
+            const exist = await _doesUsernameExist(username)
+            if (exist) {
+                return res.status(400).json({message: `Username already taken!`})
+            }
             const encryptedPassword = await bcrypt.hash(password, `${process.env.SALT}` | 0);
             const resp = await _createUser(username, encryptedPassword);
             console.log(resp);
