@@ -15,3 +15,10 @@ export async function createUser(params) {
   return new UserModel(params)
 }
 
+export async function countUsername(params) {
+  return UserModel.countDocuments({username: params})
+}
+
+export async function getUser(params) {
+  return UserModel.findOne({username: params})
+}
