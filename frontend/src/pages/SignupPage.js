@@ -10,12 +10,12 @@ import {
     Typography,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
+import UserService from "../services/UserService";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignupPage() {
+    let navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -25,18 +25,21 @@ function SignupPage() {
 
     const handleSignup = async () => {
         setIsSignupSuccess(false);
-        const res = await axios.post(URL_USER_SVC, { username, password }).catch((err) => {
-            if (err.response.status === STATUS_CODE_CONFLICT) {
-                setErrorDialog("This username already exists");
-            } else {
-                setErrorDialog("Please try again later");
+        try {
+            const res = await UserService.createUser({ username: username, password: password });
+            if (res && res.status === STATUS_CODE_CREATED) {
+                setSuccessDialog("Account successfully created");
+                setIsSignupSuccess(true);
+                navigate("/login");
             }
-        });
-        if (res && res.status === STATUS_CODE_CREATED) {
-            setSuccessDialog("Account successfully created");
-            setIsSignupSuccess(true);
+        } catch (err) {
+            setErrorDialog("Unable to signup, please try again.");
         }
     };
+
+    const handleLogin = () => {
+        navigate("/login");
+    }
 
     const closeDialog = () => setIsDialogOpen(false);
 
@@ -87,6 +90,15 @@ function SignupPage() {
                     Sign up
                 </Button>
             </Box>
+
+            <br></br>
+
+            <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
+                <Button variant={"outlined"} onClick={handleLogin}>
+                    Already an user? Sign in here!
+                </Button>
+            </Box>
+
             <Dialog open={isDialogOpen} onClose={closeDialog}>
                 <DialogTitle>{dialogTitle}</DialogTitle>
                 <DialogContent>

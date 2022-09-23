@@ -1,7 +1,11 @@
-import { AppBar, Box, Toolbar, Button, Typography } from "@mui/material";
+import { Avatar, AppBar, Box, Toolbar, Button, Typography } from "@mui/material";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
 
-function Header() {
+const Header = () => {
+    const { user, setUser } = useContext(UserContext);
+
     let navigate = useNavigate();
 
     const handleProfile = () => {
@@ -20,16 +24,23 @@ function Header() {
                         PeerPrep
                     </Typography>
 
-                    <Button color="inherit" onClick={handleHome}>
-                        Home
-                    </Button>
-                    <Button color="inherit" onClick={handleProfile}>
-                        Username
-                    </Button>
+                    {user && (
+                        <Button color="inherit" onClick={handleHome}>
+                            Home
+                        </Button>
+                    )}
+
+                    {user && (<Avatar src="/../../public/avatar-person.svg" />)}
+
+                    {user && (
+                        <Button color="inherit" onClick={handleProfile}>
+                            {user.username}
+                        </Button>
+                    )}
                 </Toolbar>
             </AppBar>
         </Box>
     );
-}
+};
 
 export default Header;

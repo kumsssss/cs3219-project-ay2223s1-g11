@@ -5,7 +5,7 @@ function HomePage() {
     let navigate = useNavigate();
 
     const handleFindMatch = () => {
-        navigate("/match");
+        navigate("/select");
     };
 
     return (

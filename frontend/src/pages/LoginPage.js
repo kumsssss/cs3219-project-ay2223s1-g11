@@ -9,11 +9,11 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link, Navigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import UserService from "../services/UserService";
+import { UserContext } from "../contexts/UserContext";
+import { JwtContext } from "../contexts/JwtContext";
+import { STATUS_CODE_SUCCESS } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
@@ -24,16 +24,20 @@ function LoginPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogMsg, setDialogMsg] = useState("");
-    const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+    const { user, setUser } = useContext(UserContext);
+    const { jwt, setJwt } = useContext(JwtContext);
 
     const handleLogin = async () => {
-        setIsLoginSuccess(false);
-        const res = await axios.post(URL_USER_SVC, { username, password }).catch((err) => {
-            setErrorDialog("Error: Please try again later");
-        });
-        if (res && res.status === STATUS_CODE_CREATED) {
-            setSuccessDialog("Account login successful");
-            setIsLoginSuccess(true);
+        try {
+            const res = await UserService.loginUser({ username: username, password: password });
+            if (res && res.status === STATUS_CODE_SUCCESS) {
+                setJwt(res.data.token);
+                setSuccessDialog("Account login successful");
+                setUser({ username: username, hasSelectedDifficulty: false, difficultyLevel: null });
+                navigate("/home");
+            }
+        } catch (err) {
+            setErrorDialog("Wrong username/password, please try again.");
         }
     };
 
@@ -90,6 +94,8 @@ function LoginPage() {
                 </Button>
             </Box>
 
+            <br></br>
+
             <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
                 <Button variant={"outlined"} onClick={handleSignup}>
                     Not a user? Sign up here!
@@ -102,13 +108,7 @@ function LoginPage() {
                     <DialogContentText>{dialogMsg}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    {isLoginSuccess ? (
-                        <Button component={Link} to="/login">
-                            Log in
-                        </Button>
-                    ) : (
-                        <Button onClick={closeDialog}>Done</Button>
-                    )}
+                    <Button onClick={closeDialog}>Done</Button>
                 </DialogActions>
             </Dialog>
         </Box>
