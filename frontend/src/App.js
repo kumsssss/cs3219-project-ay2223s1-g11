@@ -12,7 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MatchingPage from "./pages/MatchingPage";
-import SelectDiffcultyPage from "./pages/SelectDiffcultyPage";
+import SelectDifficultyPage from "./pages/SelectDifficultyPage";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -37,7 +37,7 @@ function App() {
                                 <Route path="/login" element={<LoginPage />} />
                                 <Route path="/home" element={<HomePage />} />
                                 <Route path="/profile" element={<ProfilePage />} />
-                                <Route path="/select" element={<SelectDiffcultyPage />} />
+                                <Route path="/select" element={<SelectDifficultyPage />} />
                                 <Route path="/matching" element={<MatchingPage />} />
                             </Routes>
                         </JwtContext.Provider>
