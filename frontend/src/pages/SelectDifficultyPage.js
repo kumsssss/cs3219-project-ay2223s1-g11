@@ -7,13 +7,6 @@ const SelectDiffcultyPage = () => {
     const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
-    // For testing
-    useEffect(() => {
-        if (!user) {
-            setUser({ username: "david", hasSelectedDifficulty: false, difficultyLevel: null });
-        }
-    });
-
     const clickDifficulty = (e) => {
         console.log(e.target.id);
         setUser((prevState) => {
