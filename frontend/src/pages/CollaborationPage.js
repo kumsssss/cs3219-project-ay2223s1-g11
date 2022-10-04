@@ -1,5 +1,6 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Editor imports
 import Editor from "react-simple-code-editor";
@@ -22,8 +23,17 @@ import {
 function CollaborationPage() {
     const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
 
+    let navigate = useNavigate();
+    const handleLeave = () => {
+        // TODO: handle removing room logic
+        navigate("/home");
+    };
+
     return (
         <Box padding="1%">
+            <Grid container justifyContent="flex-end">
+            <Button variant="outlined" color="error" onClick={handleLeave}>Leave</Button>
+            </Grid>
             <Grid container direction="row" justifyContent="center" alignItems="stretch">
                 <Grid xs={4} padding="1%">
                     <Typography variant="h3">Question</Typography>
@@ -53,6 +63,7 @@ function CollaborationPage() {
                         }}
                     />
                 </Grid>
+
                 <Grid xs={3} padding="1%">
                     <Typography variant="h3">Chat</Typography>
                     <div style={{ position: "relative", height: "500px" }}>
