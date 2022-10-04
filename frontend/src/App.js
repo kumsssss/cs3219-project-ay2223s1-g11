@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MatchingPage from "./pages/MatchingPage";
 import SelectDifficultyPage from "./pages/SelectDifficultyPage";
+import CollaborationPage from "./pages/CollaborationPage";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -39,6 +40,7 @@ function App() {
                                 <Route path="/profile" element={<ProfilePage />} />
                                 <Route path="/select" element={<SelectDifficultyPage />} />
                                 <Route path="/matching" element={<MatchingPage />} />
+                                <Route path="/room" element={<CollaborationPage />} />
                             </Routes>
                         </JwtContext.Provider>
                     </UserContext.Provider>
