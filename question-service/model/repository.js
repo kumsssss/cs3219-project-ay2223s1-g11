@@ -29,3 +29,7 @@ export async function getQuestionByTopic(topic) {
     let random = Math.floor(Math.random() * count);
     return QuestionModel.findOne({ topic: topic }).skip(random);
 }
+
+export async function getTopics() {
+    return QuestionModel.distinct('topic');
+}

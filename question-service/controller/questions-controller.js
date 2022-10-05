@@ -1,5 +1,5 @@
 // Import contact model
-import { ormGetRandomQuestion as _getRandomQuestion, ormGetQuestionByDifficulty as _getQuestionByDifficulty, ormGetQuestionByTopic as _getQuestionByTopic } from '../model/questions-orm.js';
+import { ormGetRandomQuestion as _getRandomQuestion, ormGetQuestionByDifficulty as _getQuestionByDifficulty, ormGetQuestionByTopic as _getQuestionByTopic, ormGetTopics as _getTopics } from '../model/questions-orm.js';
 
 
 export async function viewRandomQuestion(req, res) {
@@ -28,10 +28,19 @@ export async function viewQuestionByDifficulty(req, res) {
 
 export async function viewQuestionByTopic(req, res) {
     try {
-        let topic = (req.params.topic).toLowerCase();
-        const question = await _getQuestionByDifficulty(topic);
+        let topic = (req.params.topic);
+        const question = await _getQuestionByTopic(topic);
         return res.status(200).json({ question: question });
     } catch (err) {
-        res.status(500).json({ message: `Database failure when getting ${req.params.level} question` });
+        res.status(500).json({ message: `Database failure when getting ${req.params.topic} question` });
     }
 };
+
+export async function viewTopics(req, res) {
+    try {
+        const topics = await _getTopics();
+        return res.status(200).json({ topics: topics });
+    } catch (err) {
+        res.status(500).json({ message: 'Database failure when getting question topics'});
+    }
+}
