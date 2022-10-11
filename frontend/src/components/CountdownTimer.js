@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Typography, Stack } from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress";
 
 /**
  * Displays timer for specified interval and calls the callback function
@@ -8,43 +10,46 @@ import React, { useEffect, useState } from "react";
  * Therefore, actual duration: interval + 1.
  */
 const CountdownTimer = ({ interval, handleFinishedTimer, callback }) => {
-  const [seconds, setSeconds] = useState(interval);
-  const [hasFinished, setHasFinished] = useState(false);
+    const [seconds, setSeconds] = useState(interval);
+    const [hasFinished, setHasFinished] = useState(false);
 
-  const handleCallback = () => {
-    if (seconds === 0) {
-      setHasFinished(true);
-      handleFinishedTimer();
-    } else if (seconds === -1) {
-      callback();
-    }
-  };
+    const handleCallback = () => {
+        if (seconds === 0) {
+            setHasFinished(true);
+            handleFinishedTimer();
+        } else if (seconds === -1) {
+            callback();
+        }
+    };
 
-  const updateTimer = () => {
-    console.log(seconds, "timer");
-    setSeconds((prevState) => prevState - 1);
-  };
+    const updateTimer = () => {
+        console.log(seconds, "timer");
+        setSeconds((prevState) => prevState - 1);
+    };
 
-  const countdownHandler = () => {
-    if (seconds >= 0) {
-      const interval = setInterval(updateTimer, 1000);
-      return () => clearInterval(interval);
-    }
-  };
+    const countdownHandler = () => {
+        if (seconds >= 0) {
+            const interval = setInterval(updateTimer, 1000);
+            return () => clearInterval(interval);
+        }
+    };
 
-  useEffect(() => {
-    handleCallback();
-  }, [seconds]);
+    useEffect(() => {
+        handleCallback();
+    }, [seconds]);
 
-  useEffect(() => {
-    return countdownHandler();
-  });
+    useEffect(() => {
+        return countdownHandler();
+    });
 
-  return (
-    <div>
-      {seconds} : {interval}
-    </div>
-  );
+    return (
+        <Stack>
+            <LinearProgress />
+            <br></br>
+            <Typography variant="h4">Time left: {seconds} seconds</Typography>
+            <Typography variant="h4">Total time: {interval} seconds</Typography>
+        </Stack>
+    );
 };
 
 export default CountdownTimer;
