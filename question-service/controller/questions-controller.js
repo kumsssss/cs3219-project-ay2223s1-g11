@@ -13,7 +13,7 @@ export async function viewRandomQuestion(req, res) {
 
 export async function viewQuestionByDifficulty(req, res) {
     try {
-        let difficultyLevel = req.params.level;
+        let difficultyLevel = req.params.difficulty;
         let level = difficultyLevel.toLowerCase();
         if (level == "easy" || level == "medium" || level == "hard") {
             const question = await _getQuestionByDifficulty(level);
