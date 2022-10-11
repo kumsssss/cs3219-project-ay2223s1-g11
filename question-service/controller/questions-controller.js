@@ -19,10 +19,10 @@ export async function viewQuestionByDifficulty(req, res) {
             const question = await _getQuestionByDifficulty(level);
             return res.status(200).json({ question: question });
         } else  {
-            res.status(400).json({ message: "invalid difficulty level"});
+            return res.status(400).json({ message: "invalid difficulty level"});
         }
     } catch (err) {
-        res.status(500).json({ message: `Database failure when getting ${req.params.level} question` });
+        return res.status(500).json({ message: `Database failure when getting ${req.params.level} question` });
     }
 };
 
@@ -32,7 +32,7 @@ export async function viewQuestionByTopic(req, res) {
         const question = await _getQuestionByTopic(topic);
         return res.status(200).json({ question: question });
     } catch (err) {
-        res.status(500).json({ message: `Database failure when getting ${req.params.topic} question` });
+        return res.status(500).json({ message: `Database failure when getting ${req.params.topic} question` });
     }
 };
 
@@ -41,6 +41,6 @@ export async function viewTopics(req, res) {
         const topics = await _getTopics();
         return res.status(200).json({ topics: topics });
     } catch (err) {
-        res.status(500).json({ message: 'Database failure when getting question topics'});
+        return res.status(500).json({ message: 'Database failure when getting question topics'});
     }
 }
