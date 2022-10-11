@@ -7,7 +7,7 @@ export async function viewRandomQuestion(req, res) {
         const question = await _getRandomQuestion();
         return res.status(200).json({ question: question });
     } catch (err) {
-        res.status(500).json({ message: 'Database failure when getting random question'});
+        return res.status(500).json({ message: 'Database failure when getting random question'});
     }
 };
 
