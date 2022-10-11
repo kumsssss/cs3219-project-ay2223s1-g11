@@ -40,7 +40,7 @@ function App() {
                                 <Route path="/profile" element={<ProfilePage />} />
                                 <Route path="/select" element={<SelectDifficultyPage />} />
                                 <Route path="/matching" element={<MatchingPage />} />
-                                <Route path="/room" element={<CollaborationPage />} />
+                                <Route path="/room/*" element={<CollaborationPage />} />
                             </Routes>
                         </JwtContext.Provider>
                     </UserContext.Provider>
