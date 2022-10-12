@@ -5,8 +5,8 @@ export const ormCreateMatchInfo = async (
     secondUsername,
     difficultyLevel
 ) => {
-    const usernameOne = firstUsername;
-    const usernameTwo = secondUsername;
+    let usernameOne = firstUsername;
+    let usernameTwo = secondUsername;
 
     if (firstUsername.localeCompare(secondUsername) == 0) {
         throw new Error("Usernames must be unique.");

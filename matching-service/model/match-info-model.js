@@ -13,7 +13,6 @@ export const MatchInfo = sequelize.define("MatchInfo", {
     usernameTwo: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     difficultyLevel: {
         type: DataTypes.ENUM,
