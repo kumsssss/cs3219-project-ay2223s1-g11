@@ -64,6 +64,13 @@ const MatchingPage = () => {
 
     useEffect(() => {
         if (matchState.isSuccess && matchState.roomId) {
+            stopRenderingTimer();
+            setUser((prevState) => {
+                return {
+                    ...prevState,
+                    room: matchState.roomId
+                };
+            });
             setSuccessDialog("Found a match!");
         }
 
