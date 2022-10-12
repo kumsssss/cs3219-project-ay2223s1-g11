@@ -2,53 +2,61 @@ import sequelize from "sequelize";
 import { PendingMatch } from "./pending-match-model.js";
 
 export const ormCreatePendingMatch = async (
-  username,
-  socketId,
-  difficultyLevel
+    username,
+    socketId,
+    difficultyLevel
 ) => {
-  try {
-    const newPendingMatch = await new PendingMatch({
-      username,
-      socketId,
-      difficultyLevel,
-    });
-    await newPendingMatch.save();
-    return true;
-  } catch (err) {
-    console.log("DB Error: Could not create new Pending Match");
-    console.log(err);
-    return { err };
-  }
+    try {
+        const newPendingMatch = await new PendingMatch({
+            username,
+            socketId,
+            difficultyLevel,
+        });
+        await newPendingMatch.save();
+        return true;
+    } catch (err) {
+        console.log("DB Error: Could not create new Pending Match");
+        return { err };
+    }
 };
 
-export const ormDeletePendingMatch = async (username) => {
-  try {
-    await PendingMatch.destroy({
-      where: {
-        username,
-      },
-    });
-    return true;
-  } catch (err) {
-    console.log(
-      `DB Error: Could not delete Pending match with Username: ${username}`
-    );
-    console.log(err);
-    return { err };
-  }
+export const ormDeletePendingMatch = async (socketId) => {
+    try {
+        await PendingMatch.destroy({
+            where: {
+                socketId,
+            },
+        });
+        return true;
+    } catch (err) {
+        console.log(
+            `DB Error: Could not delete Pending match with socketId: ${socketId}`
+        );
+        return { err };
+    }
 };
 
-export const ormGetFirstMatch = async (difficultyLevel) => {
-  try {
-    const match = await PendingMatch.findOne({
-      attributes: ["username", "socketId"],
-      order: sequelize.col("createdAt"),
-      where: {
-        difficultyLevel: difficultyLevel,
-      },
-    });
-    return match;
-  } catch (err) {
-    console.log(err);
-  }
+/**
+ * Returns First Pending match with desired difficulty level but not equal to the given username.
+ */
+export const ormGetFirstMatch = async (username, difficultyLevel) => {
+    try {
+        const match = await PendingMatch.findOne({
+            attributes: ["username", "socketId"],
+            order: sequelize.col("createdAt"),
+            where: {
+                difficultyLevel,
+                username: {
+                    [sequelize.Op.ne]: username,
+                },
+            },
+        });
+        return match;
+    } catch (err) {
+        console.log(
+            `DB Error: Query to find Pending match with difficulty level: ${difficultyLevel} failed`
+        );
+        console.log(err);
+        return { err };
+    }
 };
