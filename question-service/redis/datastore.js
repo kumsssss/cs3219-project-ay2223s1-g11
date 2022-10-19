@@ -46,24 +46,4 @@ export async function expireQuestion(room) {
     }
 }
 
-export function acquireLock(key, value) {
-    result = execute(SETNX, key, value)
-    if (result == "OK") {
-        log("acquired lock by client %s for key %s", value, key)
-        return true
-    } else {
-        log("couldn't acquire, retry after some time")
-        return false;
-    }
-}
-
-export function releaseLock(key, client) {
-    value = execute(GET, key);
-    if (client == value && value != null) {
-        execute(DEL, key);
-    } else {
-        log("error while releasing lock for key %s", key);
-    }
-}
-
 export let redisClient = client;
