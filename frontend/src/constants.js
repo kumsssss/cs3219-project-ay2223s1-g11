@@ -5,3 +5,4 @@ export const STATUS_CODE_CONFLICT = 409
 export const CHAT_SERVICE_ENDPOINT = "http://localhost:8080/"
 export const USER_SERVICE_ENDPOINT = "http://localhost:8000/api/user"
 export const MATCHING_SERVICE_ENDPOINT = "http://localhost:8001"
+export const QUESTION_SERVICE_ENDPOINT = "http://localhost:8002/api/questions"

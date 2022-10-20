@@ -1,10 +1,11 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import { useChatService } from "../hooks/useChatService";
+import { getEasyQuestion, getMediumQuestion, getHardQuestion } from "../services/QuestionService";
 
 // Editor imports
 import Editor from "react-simple-code-editor";
@@ -15,9 +16,26 @@ import "prismjs/themes/prism.css";
 
 function CollaborationPage() {
     const { user, setUser } = useContext(UserContext);
-    const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
+    const [question, setQuestion] = useState({});
+    const [code, setCode] = useState(`Write your code here`);
 
-    const {exitChat} = useChatService();
+    async function fetchQuestion() {
+        if (user.difficultyLevel === "easy") {
+            await getEasyQuestion(user.room).then((qn) => setQuestion(qn));
+        } else if (user.difficultyLevel === "medium") {
+            await getMediumQuestion(user.room).then((qn) => setQuestion(qn));
+        } else if (user.difficultyLevel === "hard") {
+            await getHardQuestion(user.room).then((qn) => setQuestion(qn));
+        }
+    }
+
+    // get question from QuestionService
+    useEffect(() => {
+        fetchQuestion();
+        console.log("question in collab:", question)
+    }, []);
+
+    const { exitChat } = useChatService();
 
     let navigate = useNavigate();
     const handleLeave = () => {
@@ -28,7 +46,7 @@ function CollaborationPage() {
         setUser((prevState) => {
             return {
                 ...prevState,
-                room: null
+                room: null,
             };
         });
         navigate("/home");
@@ -44,17 +62,10 @@ function CollaborationPage() {
             <Grid container direction="row" justifyContent="center" alignItems="stretch">
                 <Grid item={true} xs={4} padding="1%">
                     <Typography variant="h3">Question</Typography>
-                    <h2>Minimum Time to Make Rope Colorful</h2>
-                    <h2>Difficulty: Medium</h2>
+                    <h2>{question.title}</h2>
+                    <h2>Difficulty: {question.difficulty}</h2>
                     <h3>
-                        Alice has n balloons arranged on a rope. You are given a 0-indexed string
-                        colors where colors[i] is the color of the ith balloon. Alice wants the rope
-                        to be colorful. She does not want two consecutive balloons to be of the same
-                        color, so she asks Bob for help. Bob can remove some balloons from the rope
-                        to make it colorful. You are given a 0-indexed integer array neededTime
-                        where neededTime[i] is the time (in seconds) that Bob needs to remove the
-                        ith balloon from the rope. Return the minimum time Bob needs to make the
-                        rope colorful.
+                        {question.question}
                     </h3>
                 </Grid>
                 <Grid item={true} xs={4} padding="1%">
