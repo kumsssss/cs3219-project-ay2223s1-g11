@@ -11,8 +11,8 @@ router.get('/', function (req, res) {
 });
 
 // Questions routes
-router.get('/questions/difficulty/:difficulty', viewQuestionByDifficulty)
-router.get('/questions/random', viewRandomQuestion)
+router.post('/questions/difficulty/:difficulty', viewQuestionByDifficulty)
+router.post('/questions/random', viewRandomQuestion)
 router.get('/questions/topics', viewTopics)
 router.get('/questions/topics/:topic', viewQuestionByTopic)
 

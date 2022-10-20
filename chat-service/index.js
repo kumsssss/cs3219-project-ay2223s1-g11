@@ -18,7 +18,11 @@ app.get("/", (req, res) => {
 })
 
 // socket.io config
-const io = new Server(httpServer)
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
 
 io.on("connection", (socket) => {chatController(io, socket)})
  

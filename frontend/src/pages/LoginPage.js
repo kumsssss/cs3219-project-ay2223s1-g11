@@ -10,7 +10,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useState, useContext, useEffect } from "react";
-import UserService from "../services/UserService";
+import { loginUser } from "../services/UserService";
 import { UserContext } from "../contexts/UserContext";
 import { JwtContext } from "../contexts/JwtContext";
 import { STATUS_CODE_SUCCESS } from "../constants";
@@ -29,11 +29,11 @@ function LoginPage() {
 
     const handleLogin = async () => {
         try {
-            const res = await UserService.loginUser({ username: username, password: password });
+            const res = await loginUser({ username: username, password: password });
             if (res && res.status === STATUS_CODE_SUCCESS) {
                 setJwt(res.data.token);
                 setSuccessDialog("Account login successful");
-                setUser({ username: username, hasSelectedDifficulty: false, difficultyLevel: null });
+                setUser({ username: username, hasSelectedDifficulty: false, difficultyLevel: null, room: null });
                 navigate("/home");
             }
         } catch (err) {
