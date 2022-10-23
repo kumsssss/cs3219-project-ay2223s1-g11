@@ -5,19 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import { useChatService } from "../hooks/useChatService";
-import { getEasyQuestion, getMediumQuestion, getHardQuestion } from "../services/QuestionService";
+import {
+    getEasyQuestion,
+    getMediumQuestion,
+    getHardQuestion,
+} from "../services/QuestionService";
 
-// Editor imports
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css";
+import Editor from "../components/Editor";
 
 function CollaborationPage() {
     const { user, setUser } = useContext(UserContext);
     const [question, setQuestion] = useState({});
-    const [code, setCode] = useState(`Write your code here`);
 
     async function fetchQuestion() {
         if (user.difficultyLevel === "easy") {
@@ -32,7 +30,7 @@ function CollaborationPage() {
     // get question from QuestionService
     useEffect(() => {
         fetchQuestion();
-        console.log("question in collab:", question)
+        console.log("question in collab:", question);
     }, []);
 
     const { exitChat } = useChatService();
@@ -59,27 +57,21 @@ function CollaborationPage() {
                     Leave
                 </Button>
             </Grid>
-            <Grid container direction="row" justifyContent="center" alignItems="stretch">
+            <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="stretch"
+            >
                 <Grid item={true} xs={4} padding="1%">
                     <Typography variant="h3">Question</Typography>
                     <h2>{question.title}</h2>
                     <h2>Difficulty: {question.difficulty}</h2>
-                    <h3>
-                        {question.question}
-                    </h3>
+                    <h3>{question.question}</h3>
                 </Grid>
                 <Grid item={true} xs={4} padding="1%">
-                    <Typography variant="h3">Live code area</Typography>
-                    <Editor
-                        value={code}
-                        onValueChange={(code) => setCode(code)}
-                        highlight={(code) => highlight(code, languages.js)}
-                        padding={10}
-                        style={{
-                            fontFamily: '"Fira code", "Fira Mono", monospace',
-                            fontSize: 16,
-                        }}
-                    />
+                    <Typography variant="h3">Editor</Typography>
+                    <Editor />
                 </Grid>
 
                 <Grid item={true} xs={3} padding="1%">

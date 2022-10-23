@@ -1,0 +1,18 @@
+{
+  "name": "collaboration-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ace-builds": "^1.12.3",
+    "express": "^4.18.2",
+    "react-ace": "^10.1.0",
+    "socket.io": "^4.5.3"
+  }
+}
