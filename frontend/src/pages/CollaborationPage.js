@@ -19,6 +19,13 @@ function CollaborationPage() {
     const [question, setQuestion] = useState({});
     const [code, setCode] = useState(`Write your code here`);
 
+    useEffect(() => {
+        if (!user) {
+            setUser(JSON.parse(localStorage.getItem("user")));
+            setQuestion(JSON.parse(localStorage.getItem("question")));
+        }
+    }, []);
+
     async function fetchQuestion() {
         if (user.difficultyLevel === "easy") {
             await getEasyQuestion(user.room).then((qn) => setQuestion(qn));
@@ -28,6 +35,10 @@ function CollaborationPage() {
             await getHardQuestion(user.room).then((qn) => setQuestion(qn));
         }
     }
+
+    useEffect(() => {
+        localStorage.setItem("question", JSON.stringify(question));
+    }, [question]);
 
     // get question from QuestionService
     useEffect(() => {
@@ -39,20 +50,20 @@ function CollaborationPage() {
 
     let navigate = useNavigate();
     const handleLeave = () => {
-        // TODO: Disconnect chat and editor sockets
-
         exitChat();
-
         setUser((prevState) => {
             return {
                 ...prevState,
                 room: null,
             };
         });
+        setQuestion(null);
+        localStorage.removeItem("question");
         navigate("/home");
     };
 
     return (
+        user &&
         <Box padding="1%">
             <Grid container justifyContent="flex-end">
                 <Button variant="outlined" color="error" onClick={handleLeave}>

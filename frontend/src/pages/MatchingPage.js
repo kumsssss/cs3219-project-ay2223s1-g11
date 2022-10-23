@@ -6,7 +6,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Typography
+    Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +68,7 @@ const MatchingPage = () => {
             setUser((prevState) => {
                 return {
                     ...prevState,
-                    room: matchState.roomId
+                    room: matchState.roomId,
                 };
             });
             setSuccessDialog("Found a match!");
@@ -78,6 +78,10 @@ const MatchingPage = () => {
             setErrorDialog("Unable to find a match, please try again :(");
         }
     }, [matchState]);
+
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+    }, [user]);
 
     const stopRenderingTimer = () => {
         setTimer((prevState) => {
