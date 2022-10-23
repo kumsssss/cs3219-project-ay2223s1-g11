@@ -1,4 +1,3 @@
-// Import contact model
 import {
     ormGetRandomQuestion as _getRandomQuestion,
     ormGetQuestionByDifficulty as _getQuestionByDifficulty,
