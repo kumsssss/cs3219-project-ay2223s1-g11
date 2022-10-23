@@ -1,4 +1,5 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
 import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +18,7 @@ import "prismjs/themes/prism.css";
 function CollaborationPage() {
     const { user, setUser } = useContext(UserContext);
     const [question, setQuestion] = useState({});
+    const [openToast, setOpenToast] = useState(true);
     const [code, setCode] = useState(`Write your code here`);
 
     useEffect(() => {
@@ -43,7 +45,7 @@ function CollaborationPage() {
     // get question from QuestionService
     useEffect(() => {
         fetchQuestion();
-        console.log("question in collab:", question)
+        console.log("question in collab:", question);
     }, []);
 
     const { exitChat } = useChatService();
@@ -63,44 +65,50 @@ function CollaborationPage() {
     };
 
     return (
-        user &&
-        <Box padding="1%">
-            <Grid container justifyContent="flex-end">
-                <Button variant="outlined" color="error" onClick={handleLeave}>
-                    Leave
-                </Button>
-            </Grid>
-            <Grid container direction="row" justifyContent="center" alignItems="stretch">
-                <Grid item={true} xs={4} padding="1%">
-                    <Typography variant="h3">Question</Typography>
-                    <h2>{question.title}</h2>
-                    <h2>Difficulty: {question.difficulty}</h2>
-                    <h3>
-                        {question.question}
-                    </h3>
+        user && (
+            <Box padding="1%">
+                <Grid container justifyContent="flex-end">
+                    <Button variant="outlined" color="error" onClick={handleLeave}>
+                        Leave
+                    </Button>
                 </Grid>
-                <Grid item={true} xs={4} padding="1%">
-                    <Typography variant="h3">Live code area</Typography>
-                    <Editor
-                        value={code}
-                        onValueChange={(code) => setCode(code)}
-                        highlight={(code) => highlight(code, languages.js)}
-                        padding={10}
-                        style={{
-                            fontFamily: '"Fira code", "Fira Mono", monospace',
-                            fontSize: 16,
-                        }}
-                    />
+                <Grid container direction="row" justifyContent="center" alignItems="stretch">
+                    <Grid item={true} xs={4} padding="1%">
+                        <Typography variant="h3">Question</Typography>
+                        <h2>{question.title}</h2>
+                        <h2>Difficulty: {question.difficulty}</h2>
+                        <h3>{question.question}</h3>
+                    </Grid>
+                    <Grid item={true} xs={4} padding="1%">
+                        <Typography variant="h3">Live code area</Typography>
+                        <Editor
+                            value={code}
+                            onValueChange={(code) => setCode(code)}
+                            highlight={(code) => highlight(code, languages.js)}
+                            padding={10}
+                            style={{
+                                fontFamily: '"Fira code", "Fira Mono", monospace',
+                                fontSize: 16,
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid item={true} xs={3} padding="1%">
+                        <Typography variant="h3">Chat</Typography>
+                        <div style={{ position: "relative", height: "500px" }}>
+                            <Chat></Chat>
+                        </div>
+                    </Grid>
                 </Grid>
 
-                <Grid item={true} xs={3} padding="1%">
-                    <Typography variant="h3">Chat</Typography>
-                    <div style={{ position: "relative", height: "500px" }}>
-                        <Chat></Chat>
-                    </div>
-                </Grid>
-            </Grid>
-        </Box>
+                <Snackbar
+                    open={openToast}
+                    autoHideDuration={3000}
+                    message="Found a match!"
+                    onClose={() => setOpenToast(false)}
+                />
+            </Box>
+        )
     );
 }
 
