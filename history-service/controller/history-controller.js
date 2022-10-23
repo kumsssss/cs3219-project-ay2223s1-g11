@@ -15,7 +15,7 @@ export async function getUserQuestionHistory(req, res) {
 
 export async function addQuestionToUserHistory(req, res) {
     try {
-        let questionInfo = req.body.question;
+        let questionInfo = req.body;
         let userName = req.params.user;
         if (!userName) {
             return res.status(404).json({ message: "userName must be provided when adding to question history" });

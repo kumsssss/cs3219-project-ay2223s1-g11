@@ -13,8 +13,7 @@ export async function ormGetUserQuestionHistory(userName) {
 
 export async function ormAddQuestionToHistory(data) {
     try {
-        const newQuestionToUserHistory = await addQuestionToHistory(data);
-        newQuestionToUserHistory.save();
+        await addQuestionToHistory(data);
         return true;
     } catch (err) {
         console.log('ERROR: Could not add question to history in database');

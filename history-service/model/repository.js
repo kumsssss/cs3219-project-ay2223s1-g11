@@ -13,7 +13,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 export async function getQuestionHistory(userName) {
-    return HistoryModel.find({ userName: userName });
+    return HistoryModel.find({ userName: userName }).select('title topic difficulty -_id');
 }
 
 export async function addQuestionToHistory(data) {
