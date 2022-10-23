@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import { useChatService } from "../hooks/useChatService";
-import { getEasyQuestion, getMediumQuestion, getHardQuestion } from "../services/QuestionService";
+import { getEasyQuestion, getMediumQuestion, getHardQuestion, getQuestion } from "../services/QuestionService";
 
 // Editor imports
 import Editor from "react-simple-code-editor";
@@ -20,13 +20,7 @@ function CollaborationPage() {
     const [code, setCode] = useState(`Write your code here`);
 
     async function fetchQuestion() {
-        if (user.difficultyLevel === "easy") {
-            await getEasyQuestion(user.room).then((qn) => setQuestion(qn));
-        } else if (user.difficultyLevel === "medium") {
-            await getMediumQuestion(user.room).then((qn) => setQuestion(qn));
-        } else if (user.difficultyLevel === "hard") {
-            await getHardQuestion(user.room).then((qn) => setQuestion(qn));
-        }
+        await getQuestion(user.room, user.difficultyLevel).then((qn) => setQuestion(qn));
     }
 
     // get question from QuestionService
