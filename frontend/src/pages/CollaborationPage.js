@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import { useChatService } from "../hooks/useChatService";
-import { getEasyQuestion, getMediumQuestion, getHardQuestion, getQuestion } from "../services/QuestionService";
+import { getQuestion } from "../services/QuestionService";
 
 // Editor imports
 import Editor from "react-simple-code-editor";
