@@ -7,9 +7,9 @@ export async function getUserQuestionHistory(req, res) {
             return res.status(404).json({ message: "userName must be provided when requesting question history" });
         }
         const questions = await _getUserQuestionHistory(userName);
-        res.status(200).json({ questionHistory: questions });
+        return res.status(200).json({ questionHistory: questions });
     } catch (err) {
-        res.status(500).json({message: "Database failure when trying to get questions"});
+        return res.status(500).json({message: "Database failure when trying to get questions"});
     }
 }
 
