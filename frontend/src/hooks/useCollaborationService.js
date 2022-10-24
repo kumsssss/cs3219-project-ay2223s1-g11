@@ -13,28 +13,43 @@ export const useCollaborationService = ({
         hasConnected: false,
         data: "",
         roomId: null,
+        output: "",
+        outputError: null,
     });
 
     const joinRoom = (roomId) => {
         setCollabState((prevState) => {
             return { ...prevState, roomId };
         });
-        socketRef.current.emit("joinRoom", {roomId})
-    }
-
+        socketRef.current.emit("joinRoom", { roomId });
+    };
 
     const emitOutgoingChanges = (data) => {
-        socketRef.current.emit("outgoingChanges", {roomId: collabState.roomId, data})
+        socketRef.current.emit("outgoingChanges", {
+            roomId: collabState.roomId,
+            data,
+        });
         setCollabState((prevState) => {
             return { ...prevState, data };
         });
-    }
+    };
 
     const updateOnIncommingChanges = (data) => {
         setCollabState((prevState) => {
             return { ...prevState, data };
         });
-    }
+    };
+
+    const runJavascript = () => {
+        socketRef.current.emit("runJavascript", { data: collabState.data });
+    };
+
+    const updateOnEvaluatedOuput = (data, error) => {
+        console.log(error);
+        setCollabState((prevState) => {
+            return { ...prevState, output: data, outputError: error };
+        });
+    };
 
     const disconnect = () => {
         socketRef.current.disconnect();
@@ -74,7 +89,11 @@ export const useCollaborationService = ({
         });
 
         socket.on("incommingChanges", ({ data }) => {
-            updateOnIncommingChanges(data)
+            updateOnIncommingChanges(data);
+        });
+
+        socket.on("evaluatedOutput", ({ data, error }) => {
+            updateOnEvaluatedOuput(data, error);
         });
 
         socketRef.current = socket;
@@ -82,5 +101,11 @@ export const useCollaborationService = ({
         return () => socket.disconnect();
     }, [enabled, onConnected, onDisconnected]);
 
-    return { joinRoom, emitOutgoingChanges, disconnect, collabState };
+    return {
+        joinRoom,
+        emitOutgoingChanges,
+        runJavascript,
+        disconnect,
+        collabState,
+    };
 };

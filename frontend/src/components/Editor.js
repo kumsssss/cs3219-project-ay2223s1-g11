@@ -4,6 +4,8 @@ import { UserContext } from "../contexts/UserContext";
 import { useCallback } from "react";
 
 import {
+    Box,
+    Button,
     FormGroup,
     FormControlLabel,
     Checkbox,
@@ -83,8 +85,13 @@ const Editor = () => {
     });
 
     const { user } = useContext(UserContext);
-    const { joinRoom, emitOutgoingChanges, disconnect, collabState } =
-        useCollaborationService({ enabled: true });
+    const {
+        joinRoom,
+        emitOutgoingChanges,
+        runJavascript,
+        disconnect,
+        collabState,
+    } = useCollaborationService({ enabled: true });
 
     const changeMode = (e) => {
         setEditorState((prevState) => {
@@ -122,6 +129,10 @@ const Editor = () => {
                 autocomplete: e.target.checked,
             };
         });
+    };
+
+    const onRun = () => {
+        runJavascript();
     };
 
     const onEditorChange = useCallback((value, viewUpdate) => {
@@ -193,6 +204,11 @@ const Editor = () => {
                     label="Enable Autocomplete"
                 />
             </FormGroup>
+            {editorState.mode === "javascript" && (
+                <Button variant="text" onClick={onRun}>
+                    Run
+                </Button>
+            )}
             <AceEditor
                 mode={editorState.mode}
                 theme={editorState.theme}
@@ -209,6 +225,25 @@ const Editor = () => {
                     showLineNumbers: true,
                 }}
             />
+            {editorState.mode === "javascript" && (
+                <Box
+                    sx={{
+                        backgroundColor: "primary.dark",
+                        "&:hover": {
+                            backgroundColor: "primary.main",
+                            opacity: [0.9, 0.8, 0.7],
+                        },
+                    }}
+                >
+                    {collabState.outputError === null ||
+                    collabState.outputError === undefined
+                        ? collabState.output === null ||
+                          collabState.output === undefined
+                            ? "Output"
+                            : collabState.output
+                        : collabState.outputError}
+                </Box>
+            )}
         </>
     );
 };

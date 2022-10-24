@@ -1,8 +1,10 @@
+import { VM } from "vm2";
+const vm = new VM();
+const currentRooms = new Map();
+
 /**
  * Handles the logic of collaborating within a room.
  */
-const currentRooms = new Map();
-
 export const collaborationController = (io, socket) => {
     console.log(`IO: Socket with id: ${socket.id} connected`);
 
@@ -20,7 +22,21 @@ export const collaborationController = (io, socket) => {
         socket.broadcast.emit("incommingChanges", { data });
     });
 
+    socket.on("runJavascript", async ({ data }) => {
+        const output = await run(data);
+        socket.emit("evaluatedOutput", output);
+    });
+
     socket.on("disconnect", () =>
         console.log(`IO: Socket with id: ${socket.id} disconnected`)
     );
+};
+
+const run = async (data) => {
+    try {
+        const evaluated = await vm.run(data);
+        return { data: String(evaluated), error: null };
+    } catch (e) {
+        return { data: null, error: e.message };
+    }
 };
