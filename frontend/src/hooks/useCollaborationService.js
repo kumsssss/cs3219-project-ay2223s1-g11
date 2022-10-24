@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useDebugValue } from "react";
 import { io } from "socket.io-client";
 import { COLLABORATION_SERVICE_ENDPOINT } from "../constants";
 
@@ -15,6 +15,7 @@ export const useCollaborationService = ({
         roomId: null,
         output: "",
         outputError: null,
+        pushState: false,
     });
 
     const joinRoom = (roomId) => {
@@ -40,12 +41,30 @@ export const useCollaborationService = ({
         });
     };
 
+    const pushData = (data) => {
+        socketRef.current.emit("outgoingChanges", {
+            roomId: collabState.roomId,
+            data,
+        });
+        setCollabState((prevState) => {
+            return { ...prevState, pushState: false };
+        });
+    };
+
+    const setActivePushState = () => {
+        setCollabState((prevState) => {
+            return { ...prevState, pushState: true };
+        });
+    };
+
     const runJavascript = () => {
-        socketRef.current.emit("runJavascript", { data: collabState.data });
+        socketRef.current.emit("runJavascript", {
+            roomId: collabState.roomId,
+            data: collabState.data,
+        });
     };
 
     const updateOnEvaluatedOuput = (data, error) => {
-        console.log(error);
         setCollabState((prevState) => {
             return { ...prevState, output: data, outputError: error };
         });
@@ -96,6 +115,10 @@ export const useCollaborationService = ({
             updateOnEvaluatedOuput(data, error);
         });
 
+        socket.on("pullData", () => {
+            setActivePushState();
+        });
+
         socketRef.current = socket;
 
         return () => socket.disconnect();
@@ -106,6 +129,7 @@ export const useCollaborationService = ({
         emitOutgoingChanges,
         runJavascript,
         disconnect,
+        pushData,
         collabState,
     };
 };

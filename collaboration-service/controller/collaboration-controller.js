@@ -1,6 +1,13 @@
 import { VM } from "vm2";
+import {
+    assignRoom,
+    createRoom,
+    decrementUserCount,
+    deleteRoomAssignment,
+    incrementUserCount,
+    isRoomCreated,
+} from "../redis/datastore.js";
 const vm = new VM();
-const currentRooms = new Map();
 
 /**
  * Handles the logic of collaborating within a room.
@@ -10,26 +17,31 @@ export const collaborationController = (io, socket) => {
 
     socket.on("joinRoom", async ({ roomId }) => {
         socket.join(roomId);
-        if (currentRooms.has(roomId)) {
-            socket.emit("incommingChanges", { data: currentRooms.get(roomId) });
+        if (isRoomCreated(roomId)) {
+            incrementUserCount(roomId);
+            socket.to(roomId).emit("pullData");
         } else {
-            currentRooms.set(currentRooms.set(roomId, ""));
+            createRoom(roomId);
+            assignRoom(socket.id, roomId);
         }
     });
 
     socket.on("outgoingChanges", async ({ roomId, data }) => {
-        currentRooms.set(roomId, data);
-        socket.broadcast.emit("incommingChanges", { data });
+        socket.to(roomId).emit("incommingChanges", { data });
     });
 
-    socket.on("runJavascript", async ({ data }) => {
+    socket.on("runJavascript", async ({ roomId, data }) => {
         const output = await run(data);
-        socket.emit("evaluatedOutput", output);
+        socket.to(roomId).emit("evaluatedOutput", output);
     });
 
-    socket.on("disconnect", () =>
-        console.log(`IO: Socket with id: ${socket.id} disconnected`)
-    );
+    socket.on("disconnect", async () => {
+        const roomId = await deleteRoomAssignment(socket.id);
+        if (roomId !== null) {
+            decrementUserCount(roomId);
+        }
+        console.log(`IO: Socket with id: ${socket.id} disconnected`);
+    });
 };
 
 const run = async (data) => {

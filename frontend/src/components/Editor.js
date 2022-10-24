@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useCollaborationService } from "../hooks/useCollaborationService";
 import { UserContext } from "../contexts/UserContext";
-import { useCallback } from "react";
 
 import {
     Box,
@@ -90,6 +89,7 @@ const Editor = () => {
         emitOutgoingChanges,
         runJavascript,
         disconnect,
+        pushData,
         collabState,
     } = useCollaborationService({ enabled: true });
 
@@ -135,9 +135,15 @@ const Editor = () => {
         runJavascript();
     };
 
-    const onEditorChange = useCallback((value, viewUpdate) => {
+    const onEditorChange = (value, viewUpdate) => {
         emitOutgoingChanges(value);
-    }, []);
+    };
+
+    useEffect(() => {
+        if (collabState.pushState) {
+            pushData(collabState.data);
+        }
+    }, [collabState.pushState]);
 
     useEffect(() => {
         joinRoom(user.room);
@@ -215,6 +221,7 @@ const Editor = () => {
                 onChange={onEditorChange}
                 name="editor"
                 fontSize={editorState.fontSize}
+                value={collabState.data}
                 showPrintMargin={true}
                 showGutter={true}
                 highlightActiveLine={true}

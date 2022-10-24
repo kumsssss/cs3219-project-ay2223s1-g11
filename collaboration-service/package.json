@@ -5,15 +5,21 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "ace-builds": "^1.12.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "react-ace": "^10.1.0",
+    "redis": "^4.3.1",
     "socket.io": "^4.5.3",
     "vm2": "^3.9.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
