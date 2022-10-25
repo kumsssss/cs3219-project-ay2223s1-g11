@@ -19,6 +19,10 @@ const SelectDiffcultyPage = () => {
         navigate("/matching");
     };
 
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+    }, [user]);
+
     return (
         <Stack padding="5%">
             <Typography variant="h2">Select Difficulty</Typography>

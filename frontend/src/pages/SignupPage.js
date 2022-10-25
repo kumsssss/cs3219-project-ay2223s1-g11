@@ -9,7 +9,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createUser } from "../services/UserService";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,6 +22,12 @@ function SignupPage() {
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogMsg, setDialogMsg] = useState("");
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+
+    useEffect(() => {
+        if (localStorage.getItem("user") !== null) {
+            navigate("/home");
+        }
+    })
 
     const handleSignup = async () => {
         setIsSignupSuccess(false);

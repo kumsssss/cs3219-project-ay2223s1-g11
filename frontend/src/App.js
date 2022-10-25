@@ -36,11 +36,11 @@ function App() {
                                 ></Route>
                                 <Route path="/signup" element={<SignupPage />} />
                                 <Route path="/login" element={<LoginPage />} />
-                                <Route path="/home" element={<HomePage />} />
-                                <Route path="/profile" element={<ProfilePage />} />
-                                <Route path="/select" element={<SelectDifficultyPage />} />
-                                <Route path="/matching" element={<MatchingPage />} />
-                                <Route path="/room/*" element={<CollaborationPage />} />
+                                <Route path="/home" element={localStorage.getItem("user") !== null ? <HomePage /> : <Navigate to='/login'/>} />
+                                <Route path="/profile" element={localStorage.getItem("user") !== null ? <ProfilePage /> : <Navigate to='/login'/>} />
+                                <Route path="/select" element={localStorage.getItem("user") !== null ? <SelectDifficultyPage /> : <Navigate to='/login'/>} />
+                                <Route path="/matching" element={localStorage.getItem("user") !== null ? <MatchingPage /> : <Navigate to='/login'/>} />
+                                <Route path="/room/*" element={localStorage.getItem("user") !== null ? <CollaborationPage /> : <Navigate to='/login'/>} />
                             </Routes>
                         </JwtContext.Provider>
                     </UserContext.Provider>
