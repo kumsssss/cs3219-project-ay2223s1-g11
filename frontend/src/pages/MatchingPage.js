@@ -23,7 +23,10 @@ const MatchingPage = () => {
         enabled: true,
     });
     const { user, setUser } = useContext(UserContext);
-    const [timer, setTimer] = useState({ hasFinished: false, isRendered: true });
+    const [timer, setTimer] = useState({
+        hasFinished: false,
+        isRendered: true,
+    });
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState("");
@@ -47,7 +50,10 @@ const MatchingPage = () => {
 
     useEffect(() => {
         if (user && !matchState.isPending) {
-            findMatch({ username: user.username, difficultyLevel: user.difficultyLevel });
+            findMatch({
+                username: user.username,
+                difficultyLevel: user.difficultyLevel,
+            });
         }
     }, [user]);
 
@@ -103,7 +109,9 @@ const MatchingPage = () => {
                 </DialogContent>
                 <DialogActions>
                     {matchState.hasFailed && (
-                        <Button onClick={closeFailDialog}>Return to Select</Button>
+                        <Button onClick={closeFailDialog}>
+                            Return to Select
+                        </Button>
                     )}
                 </DialogActions>
             </Dialog>
