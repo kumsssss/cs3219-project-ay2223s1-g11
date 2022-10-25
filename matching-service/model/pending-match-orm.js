@@ -37,7 +37,8 @@ export const ormDeletePendingMatch = async (socketId) => {
 };
 
 /**
- * Returns First Pending match with desired difficulty level but not equal to the given username.
+ * Returns First Pending match with desired difficulty level but not equal to the given username
+ * and deletes returns the pending match.
  */
 export const ormGetFirstMatch = async (username, difficultyLevel) => {
     try {
@@ -51,12 +52,43 @@ export const ormGetFirstMatch = async (username, difficultyLevel) => {
                 },
             },
         });
+        if (match) {
+            await PendingMatch.destroy({
+                where: {
+                    username: match.dataValues.username,
+                },
+            });
+        }
+
         return match;
     } catch (err) {
         console.log(
             `DB Error: Query to find Pending match with difficulty level: ${difficultyLevel} failed`
         );
         console.log(err);
+        return { err };
+    }
+};
+
+/**
+ * Returns true if the pending match exits else false.
+ */
+export const ormIsPendingMatchExisting = async (socketId) => {
+    try {
+        const match = await PendingMatch.findOne({
+            where: {
+                socketId,
+            },
+        });
+        if (match) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        console.log(
+            `DB Error: Query to find Pending match with socketId: ${socketId} failed`
+        );
         return { err };
     }
 };

@@ -2,12 +2,13 @@ import {
     ormCreatePendingMatch as _createPendingMatch,
     ormGetFirstMatch as _getFirstMatch,
     ormDeletePendingMatch as _deletePendingMatch,
+    ormIsPendingMatchExisting as isPendingMatchExisting,
 } from "../model/pending-match-orm.js";
 
 import { ormCreateMatchInfo as _createMatchInfo } from "../model/match-info-orm.js";
 
 // Expressed in milliseconds
-export const TIMEOUT_INTERVAL = 30000;
+export const TIMEOUT_INTERVAL = 5000;
 
 /**
  * Handles the logic of matching users.
@@ -28,17 +29,17 @@ export const matchController = (io, socket) => {
                 partnerSocketId,
                 difficultyLevel
             );
-            return;
-        }
-        const { isCreated, error } = await createPendingMatch(
-            username,
-            socket.id,
-            difficultyLevel
-        );
-        if (isCreated) {
-            handleTimeoutMatchFail(io, socket, username);
         } else {
-            handleErrorMatchFail(io, socket, error);
+            const { isCreated, error } = await createPendingMatch(
+                username,
+                socket.id,
+                difficultyLevel
+            );
+            if (isCreated) {
+                handleTimeoutMatchFail(io, socket, username);
+            } else {
+                handleErrorMatchFail(io, socket, error);
+            }
         }
     });
 
@@ -127,7 +128,6 @@ const handleMatchSuccess = async (
     partnerSocketId,
     difficultyLevel
 ) => {
-    await deletePendingMatch(partnerSocketId);
     const roomId = createRoomId(username, partnerUsername);
 
     io.to(socket.id).emit("matchSuccess", {
@@ -150,9 +150,12 @@ const handleErrorMatchFail = async (io, socket, error) => {
     io.to(socket.id).emit("matchFail", { error: message });
 };
 
-const handleTimeoutMatchFail = async (io, socket, username) => {
+const handleTimeoutMatchFail = async (io, socket) => {
     setTimeout(async () => {
-        await deletePendingMatch(socket.id);
-        io.to(socket.id).emit("matchFail", { error: "Timeout" });
+        const exists = await isPendingMatchExisting(socket.id);
+        if (exists) {
+            await deletePendingMatch(socket.id);
+            io.to(socket.id).emit("matchFail", { error: "Timeout" });
+        }
     }, TIMEOUT_INTERVAL);
 };
