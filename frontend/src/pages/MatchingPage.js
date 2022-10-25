@@ -37,17 +37,6 @@ const MatchingPage = () => {
         setIsDialogOpen(false);
         navigate("/select");
     };
-    const closeSuccessDialog = () => {
-        setIsDialogOpen(false);
-        navigate(`/room/${matchState.roomId}`);
-    };
-
-    const setSuccessDialog = (msg) => {
-        setIsDialogOpen(true);
-        setDialogTitle("Success");
-        setDialogMsg(msg);
-    };
-
     const setErrorDialog = (msg) => {
         setIsDialogOpen(true);
         setDialogTitle("Failure");
@@ -77,13 +66,19 @@ const MatchingPage = () => {
                     room: matchState.roomId,
                 };
             });
-            setSuccessDialog("Found a match!");
         }
 
         if (matchState.hasFailed) {
             setErrorDialog("Unable to find a match, please try again :(");
         }
     }, [matchState]);
+
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+        if (user.room) {
+            navigate(`/room/${matchState.roomId}`);
+        }
+    }, [user]);
 
     const stopRenderingTimer = () => {
         setTimer((prevState) => {
@@ -113,11 +108,6 @@ const MatchingPage = () => {
                     <DialogContentText>{dialogMsg}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    {matchState.isSuccess && matchState.roomId && (
-                        <Button onClick={closeSuccessDialog}>
-                            Go to room!
-                        </Button>
-                    )}
                     {matchState.hasFailed && (
                         <Button onClick={closeFailDialog}>
                             Return to Select
