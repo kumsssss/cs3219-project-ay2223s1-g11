@@ -11,10 +11,10 @@ import {
     Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { JwtContext } from "../contexts/JwtContext";
-import UserService from "../services/UserService";
+import { logoutUser, changePassword, deleteUser } from "../services/UserService";
 import { STATUS_CODE_SUCCESS } from "../constants";
 
 function ProfilePage() {
@@ -22,6 +22,12 @@ function ProfilePage() {
 
     const { user, setUser } = useContext(UserContext);
     const { jwt, setJwt } = useContext(JwtContext);
+
+    useEffect(() => {
+        if (!user) {
+            setUser(JSON.parse(localStorage.getItem("user")));
+        }
+    }, []);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState("");
@@ -48,11 +54,9 @@ function ProfilePage() {
 
     const handleDelete = async () => {
         try {
-            const res = await UserService.deleteUser({ username: user.username }, jwt);
+            const res = await deleteUser({ username: user.username }, jwt);
             if (res && res.status === STATUS_CODE_SUCCESS) {
-                setUser(null);
-                setJwt(null);
-                navigate("/login");
+                cleanDataAndRedirect();
             }
         } catch (err) {
             setErrorDialog("Having issues deleting account, please try again.");
@@ -61,16 +65,21 @@ function ProfilePage() {
 
     const handleLogout = async () => {
         try {
-            const res = await UserService.logoutUser({ username: user.username }, jwt);
+            const res = await logoutUser({ username: user.username }, jwt);
             if (res && res.status === STATUS_CODE_SUCCESS) {
-                setUser(null);
-                setJwt(null);
-                navigate("/login");
+                cleanDataAndRedirect();
             }
         } catch (err) {
             setErrorDialog("Having issues logging out, please try again.");
         }
     };
+
+    const cleanDataAndRedirect = () => {
+        setUser(null);
+        setJwt(null);
+        localStorage.removeItem("user");
+        navigate("/login");
+    }
 
     const openPasswordDialog = () => {
         setIsPasswordDialogOpen(true);
@@ -78,7 +87,7 @@ function ProfilePage() {
 
     const handlePassword = async () => {
         try {
-            const res = await UserService.changePassword({ username: user.username, currentPassword: password, newPassword: newPassword });
+            const res = await changePassword({ username: user.username, currentPassword: password, newPassword: newPassword });
             if (res && res.status === STATUS_CODE_SUCCESS) {
                 setSuccessDialog("Successfully changed password!");
                 setPassword('');
@@ -91,6 +100,7 @@ function ProfilePage() {
     };
 
     return (
+        user &&
         <Stack padding="5%">
             <Typography variant="h2" color="inherit" component="div">
                 Profile of {user.username}

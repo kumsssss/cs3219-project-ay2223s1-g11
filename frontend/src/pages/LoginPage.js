@@ -10,7 +10,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useState, useContext, useEffect } from "react";
-import UserService from "../services/UserService";
+import { loginUser } from "../services/UserService";
 import { UserContext } from "../contexts/UserContext";
 import { JwtContext } from "../contexts/JwtContext";
 import { STATUS_CODE_SUCCESS } from "../constants";
@@ -27,13 +27,21 @@ function LoginPage() {
     const { user, setUser } = useContext(UserContext);
     const { jwt, setJwt } = useContext(JwtContext);
 
+    useEffect(() => {
+        if (localStorage.getItem("user") !== null) {
+            navigate("/home");
+        }
+    })
+
     const handleLogin = async () => {
         try {
-            const res = await UserService.loginUser({ username: username, password: password });
+            const res = await loginUser({ username: username, password: password });
             if (res && res.status === STATUS_CODE_SUCCESS) {
                 setJwt(res.data.token);
                 setSuccessDialog("Account login successful");
-                setUser({ username: username, hasSelectedDifficulty: false, difficultyLevel: null });
+                const userDetails = { username: username, hasSelectedDifficulty: false, difficultyLevel: null, room: null };
+                setUser(userDetails);
+                localStorage.setItem("user", JSON.stringify(userDetails));
                 navigate("/home");
             }
         } catch (err) {

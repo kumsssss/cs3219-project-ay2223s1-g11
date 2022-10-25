@@ -1,9 +1,15 @@
 import { Avatar, AppBar, Box, Toolbar, Button, Typography } from "@mui/material";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 
 const Header = () => {
+    useEffect(() => {
+        if (!user) {
+            setUser(JSON.parse(localStorage.getItem("user")));
+        }
+    }, []);
+
     const { user, setUser } = useContext(UserContext);
 
     let navigate = useNavigate();

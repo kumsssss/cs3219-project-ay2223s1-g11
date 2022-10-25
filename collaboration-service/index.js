@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { chatController } from "./controller/chat-controller.js";
+import { collaborationController } from "./controller/collaboration-controller.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -14,16 +14,15 @@ app.options("*", cors()); // enable pre-flight across-the-board
 const httpServer = createServer(app);
 
 app.get("/", (req, res) => {
-  res.send("Hello World from chat-service")
-})
+    res.send("Hello World from collaboration-service");
+});
 
 // socket.io config
 const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-  },
+    cors: {
+        origin: "http://localhost:3000",
+    },
 });
+io.on("connection", (socket) => collaborationController(io, socket));
 
-io.on("connection", (socket) => {chatController(io, socket)})
- 
-httpServer.listen(8080);
+httpServer.listen(8008);

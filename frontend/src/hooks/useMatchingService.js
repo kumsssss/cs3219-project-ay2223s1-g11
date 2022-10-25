@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
+import { MATCHING_SERVICE_ENDPOINT } from "../constants";
 
 export const useMatchingService = ({
   enabled,
@@ -67,7 +68,7 @@ export const useMatchingService = ({
       return;
     }
 
-    const socket = io("localhost:8001");
+    const socket = io(MATCHING_SERVICE_ENDPOINT);
 
     socket.on("connected", () => {
       updateOnConnected();
