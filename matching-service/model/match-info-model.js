@@ -15,8 +15,12 @@ export const MatchInfo = sequelize.define("MatchInfo", {
         allowNull: false,
     },
     difficultyLevel: {
-        type: DataTypes.ENUM,
-        values: ["easy", "hard", "difficult"],
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    topic: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
 });
 

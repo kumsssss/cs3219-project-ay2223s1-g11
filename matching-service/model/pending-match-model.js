@@ -17,9 +17,12 @@ export const PendingMatch = sequelize.define("PendingMatch", {
         unique: true,
     },
     difficultyLevel: {
-        type: DataTypes.ENUM,
-        values: ["easy", "hard", "difficult"],
-        allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    topic: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
 });
 

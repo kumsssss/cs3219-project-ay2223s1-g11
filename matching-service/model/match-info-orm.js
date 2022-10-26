@@ -1,19 +1,33 @@
 import { MatchInfo } from "./match-info-model.js";
 
 export const ormCreateMatchInfo = async (
-    firstUsername,
-    secondUsername,
-    difficultyLevel
+    inputUsernameOne,
+    inputUsernameTwo,
+    inputDifficultyLevel,
+    inputTopic
 ) => {
-    let usernameOne = firstUsername;
-    let usernameTwo = secondUsername;
+    if (inputDifficultyLevel === null && inputTopic === null) {
+        throw new Error("Match Info: both difficulty level and topic.");
+    }
 
-    if (firstUsername.localeCompare(secondUsername) == 0) {
-        throw new Error("Usernames must be unique.");
-    } else if (firstUsername.localeCompare(secondUsername) > 0) {
+    let difficultyLevel = null;
+    if (inputDifficultyLevel !== null) {
+        difficultyLevel = inputDifficultyLevel.toLowerCase();
+    }
+
+    let topic = null;
+    if (inputTopic !== null) {
+        topic = inputTopic.toLowerCase();
+    }
+
+    let usernameOne = inputUsernameOne;
+    let usernameTwo = inputUsernameTwo;
+    if (inputUsernameOne.localeCompare(inputUsernameTwo) == 0) {
+        throw new Error("Match Pending Match: Usernames must be unique.");
+    } else if (inputUsernameOne.localeCompare(inputUsernameTwo) > 0) {
         // Enforce ordering
-        usernameOne = secondUsername;
-        usernameTwo = firstUsername;
+        usernameOne = inputUsernameTwo;
+        usernameTwo = inputUsernameOne;
     }
 
     try {
@@ -21,6 +35,7 @@ export const ormCreateMatchInfo = async (
             usernameOne,
             usernameTwo,
             difficultyLevel,
+            topic,
         });
         await newMatchInfo.save();
         return true;
@@ -56,7 +71,7 @@ export const ormDeleteMatchInfo = async (firstUsername, secondUsername) => {
     }
 };
 
-export const ormGetLiveMatch = async (username) => {
+export const ormGetAllMatchInfo = async (username) => {
     try {
         const matchInfo = await MatchInfo.findOne({
             where: {
