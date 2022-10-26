@@ -6,7 +6,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Typography
+    Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,10 @@ const MatchingPage = () => {
         enabled: true,
     });
     const { user, setUser } = useContext(UserContext);
-    const [timer, setTimer] = useState({ hasFinished: false, isRendered: true });
+    const [timer, setTimer] = useState({
+        hasFinished: false,
+        isRendered: true,
+    });
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState("");
@@ -34,17 +37,6 @@ const MatchingPage = () => {
         setIsDialogOpen(false);
         navigate("/select");
     };
-    const closeSuccessDialog = () => {
-        setIsDialogOpen(false);
-        navigate(`/room/${matchState.roomId}`);
-    };
-
-    const setSuccessDialog = (msg) => {
-        setIsDialogOpen(true);
-        setDialogTitle("Success");
-        setDialogMsg(msg);
-    };
-
     const setErrorDialog = (msg) => {
         setIsDialogOpen(true);
         setDialogTitle("Failure");
@@ -58,7 +50,10 @@ const MatchingPage = () => {
 
     useEffect(() => {
         if (user && !matchState.isPending) {
-            findMatch({ username: user.username, difficultyLevel: user.difficultyLevel });
+            findMatch({
+                username: user.username,
+                difficultyLevel: user.difficultyLevel,
+            });
         }
     }, [user]);
 
@@ -68,16 +63,22 @@ const MatchingPage = () => {
             setUser((prevState) => {
                 return {
                     ...prevState,
-                    room: matchState.roomId
+                    room: matchState.roomId,
                 };
             });
-            setSuccessDialog("Found a match!");
         }
 
         if (matchState.hasFailed) {
             setErrorDialog("Unable to find a match, please try again :(");
         }
     }, [matchState]);
+
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+        if (user.room) {
+            navigate(`/room/${matchState.roomId}`);
+        }
+    }, [user]);
 
     const stopRenderingTimer = () => {
         setTimer((prevState) => {
@@ -107,11 +108,10 @@ const MatchingPage = () => {
                     <DialogContentText>{dialogMsg}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    {matchState.isSuccess && matchState.roomId && (
-                        <Button onClick={closeSuccessDialog}>Go to room!</Button>
-                    )}
                     {matchState.hasFailed && (
-                        <Button onClick={closeFailDialog}>Return to Select</Button>
+                        <Button onClick={closeFailDialog}>
+                            Return to Select
+                        </Button>
                     )}
                 </DialogActions>
             </Dialog>
