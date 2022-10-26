@@ -6,11 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import { useChatService } from "../hooks/useChatService";
-import {
-    getEasyQuestion,
-    getMediumQuestion,
-    getHardQuestion,
-} from "../services/QuestionService";
+import { getQuestion } from "../services/QuestionService";
 
 import Editor from "../components/Editor";
 
@@ -27,13 +23,7 @@ function CollaborationPage() {
     }, []);
 
     async function fetchQuestion() {
-        if (user.difficultyLevel === "easy") {
-            await getEasyQuestion(user.room).then((qn) => setQuestion(qn));
-        } else if (user.difficultyLevel === "medium") {
-            await getMediumQuestion(user.room).then((qn) => setQuestion(qn));
-        } else if (user.difficultyLevel === "hard") {
-            await getHardQuestion(user.room).then((qn) => setQuestion(qn));
-        }
+        await getQuestion(user.room, user.difficultyLevel).then((qn) => setQuestion(qn));
     }
 
     useEffect(() => {

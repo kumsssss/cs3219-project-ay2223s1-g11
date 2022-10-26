@@ -15,7 +15,7 @@ import { lock } from "simple-redis-mutex";
 
 export async function viewRandomQuestion(req, res) {
     try {
-        let room = req.body.room;
+        let room = req.query.room;
         if (!room) {
             return res
                 .status(404)
@@ -40,7 +40,7 @@ export async function viewRandomQuestion(req, res) {
 
 export async function viewQuestionByDifficulty(req, res) {
     try {
-        let room = req.body.room;
+        let room = req.query.room;
         if (!room) {
             return res
                 .status(404)
