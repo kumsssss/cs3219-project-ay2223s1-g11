@@ -16,8 +16,7 @@
     "express": "^4.18.2",
     "react-ace": "^10.1.0",
     "redis": "^4.3.1",
-    "socket.io": "^4.5.3",
-    "vm2": "^3.9.11"
+    "socket.io": "^4.5.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

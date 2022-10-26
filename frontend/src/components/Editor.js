@@ -3,7 +3,6 @@ import { useCollaborationService } from "../hooks/useCollaborationService";
 import { UserContext } from "../contexts/UserContext";
 
 import {
-    Box,
     Button,
     FormGroup,
     FormControlLabel,
@@ -12,6 +11,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Snackbar,
 } from "@mui/material";
 
 import AceEditor from "react-ace";
@@ -82,14 +82,16 @@ const Editor = () => {
         fontSize: DEFAULT_FONT_SIZE,
         autocomplete: true,
     });
+    const [openToast, setOpenToast] = useState(false);
 
     const { user } = useContext(UserContext);
     const {
         joinRoom,
         emitOutgoingChanges,
-        runJavascript,
         disconnect,
         pushData,
+        pushEditorMode,
+        initCollabEditorMode,
         collabState,
     } = useCollaborationService({ enabled: true });
 
@@ -101,6 +103,7 @@ const Editor = () => {
                 modePlaceholder: e.target.value,
             };
         });
+        pushEditorMode(e.target.value);
     };
 
     const changeTheme = (e) => {
@@ -131,13 +134,20 @@ const Editor = () => {
         });
     };
 
-    const onRun = () => {
-        runJavascript();
-    };
-
     const onEditorChange = (value, viewUpdate) => {
         emitOutgoingChanges(value);
     };
+
+    useEffect(() => {
+        initCollabEditorMode(editorState.editorMode);
+
+        // Runs when the component unmounts
+        return () => disconnect();
+    }, []);
+
+    useEffect(() => {
+        joinRoom(user.room);
+    }, [user.room]);
 
     useEffect(() => {
         if (collabState.pushState) {
@@ -146,13 +156,17 @@ const Editor = () => {
     }, [collabState.pushState]);
 
     useEffect(() => {
-        joinRoom(user.room);
-    }, [user.room]);
-
-    // Runs when the component unmounts
-    useEffect(() => {
-        return disconnect;
-    }, []);
+        if (editorState.modePlaceholder !== collabState.editorMode) {
+            setOpenToast(true);
+            setEditorState((prevState) => {
+                return {
+                    ...prevState,
+                    mode: MODES.get(collabState.editorMode),
+                    modePlaceholder: collabState.editorMode,
+                };
+            });
+        }
+    }, [collabState.editorMode]);
 
     return (
         <>
@@ -210,11 +224,6 @@ const Editor = () => {
                     label="Enable Autocomplete"
                 />
             </FormGroup>
-            {editorState.mode === "javascript" && (
-                <Button variant="text" onClick={onRun}>
-                    Run
-                </Button>
-            )}
             <AceEditor
                 mode={editorState.mode}
                 theme={editorState.theme}
@@ -232,25 +241,12 @@ const Editor = () => {
                     showLineNumbers: true,
                 }}
             />
-            {editorState.mode === "javascript" && (
-                <Box
-                    sx={{
-                        backgroundColor: "primary.dark",
-                        "&:hover": {
-                            backgroundColor: "primary.main",
-                            opacity: [0.9, 0.8, 0.7],
-                        },
-                    }}
-                >
-                    {collabState.outputError === null ||
-                    collabState.outputError === undefined
-                        ? collabState.output === null ||
-                          collabState.output === undefined
-                            ? "Output"
-                            : collabState.output
-                        : collabState.outputError}
-                </Box>
-            )}
+            <Snackbar
+                open={openToast}
+                autoHideDuration={3000}
+                message="Editor language updated"
+                onClose={() => setOpenToast(false)}
+            />
         </>
     );
 };

@@ -13,8 +13,7 @@ export const useCollaborationService = ({
         hasConnected: false,
         data: "",
         roomId: null,
-        output: "",
-        outputError: null,
+        editorMode: null,
         pushState: false,
     });
 
@@ -51,22 +50,31 @@ export const useCollaborationService = ({
         });
     };
 
+    const initCollabEditorMode = (editorMode) => {
+        setCollabState((prevState) => {
+            return { ...prevState, editorMode };
+        });
+    };
+
+    const pushEditorMode = (editorMode) => {
+        socketRef.current.emit("pushEditorMode", {
+            roomId: collabState.roomId,
+            data: editorMode,
+        });
+        setCollabState((prevState) => {
+            return { ...prevState, editorMode };
+        });
+    };
+
+    const updateOnIncommingEditorMode = (editorMode) => {
+        setCollabState((prevState) => {
+            return { ...prevState, editorMode };
+        });
+    };
+
     const setActivePushState = () => {
         setCollabState((prevState) => {
             return { ...prevState, pushState: true };
-        });
-    };
-
-    const runJavascript = () => {
-        socketRef.current.emit("runJavascript", {
-            roomId: collabState.roomId,
-            data: collabState.data,
-        });
-    };
-
-    const updateOnEvaluatedOuput = (data, error) => {
-        setCollabState((prevState) => {
-            return { ...prevState, output: data, outputError: error };
         });
     };
 
@@ -111,12 +119,12 @@ export const useCollaborationService = ({
             updateOnIncommingChanges(data);
         });
 
-        socket.on("evaluatedOutput", ({ data, error }) => {
-            updateOnEvaluatedOuput(data, error);
-        });
-
         socket.on("pullData", () => {
             setActivePushState();
+        });
+
+        socket.on("incommingEditorMode", ({ data }) => {
+            updateOnIncommingEditorMode(data);
         });
 
         socketRef.current = socket;
@@ -127,9 +135,10 @@ export const useCollaborationService = ({
     return {
         joinRoom,
         emitOutgoingChanges,
-        runJavascript,
         disconnect,
         pushData,
+        pushEditorMode,
+        initCollabEditorMode,
         collabState,
     };
 };
