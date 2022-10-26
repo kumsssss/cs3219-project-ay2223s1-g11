@@ -13,9 +13,13 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 export async function getQuestionHistory(userName) {
-    return HistoryModel.find({ userName: userName }).select('title topic difficulty -_id');
+    return HistoryModel.find({ userName: userName }).select('title topic difficulty question lastAttempt -_id').sort({lastAttempt: -1});
 }
 
 export async function addQuestionToHistory(data) {
-    return HistoryModel.insertMany({ userName: data.userName, title: data.title, topic: data.topic, difficulty: data.difficulty});
+    var query = { userName: data.userName, title: data.title, topic: data.topic, difficulty: data.difficulty, question: data.question };
+    var update = { lastAttempt: new Date() };
+    var options = { upsert: true, new: true };
+    // console.log(new Date().toLocaleString('en-GB', { timeZone: 'Asia/Singapore' }))
+    return HistoryModel.findOneAndUpdate(query, update, options);
 }

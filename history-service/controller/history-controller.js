@@ -20,10 +20,10 @@ export async function addQuestionToUserHistory(req, res) {
         if (!userName) {
             return res.status(404).json({ message: "userName must be provided when adding to question history" });
         }
-        if (!questionInfo || !questionInfo.title || !questionInfo.topic || !questionInfo.difficulty) {
+        if (!questionInfo || !questionInfo.title || !questionInfo.topic || !questionInfo.difficulty || !questionInfo.question) {
             return res.status(404).json({ message: "All question details must be provided when adding to question history" });
         }
-        const response = await _addQuestionToHistory({ userName: userName, title: questionInfo.title, difficulty: questionInfo.difficulty, topic: questionInfo.topic });
+        const response = await _addQuestionToHistory({ userName: userName, title: questionInfo.title, difficulty: questionInfo.difficulty, topic: questionInfo.topic, question: questionInfo.question });
         if (response.err) {
             return res.status(500).json({ message: "Unable to add question to user's question history" });
         }

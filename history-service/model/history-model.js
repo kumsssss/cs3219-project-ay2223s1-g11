@@ -1,21 +1,6 @@
 import mongoose from 'mongoose';
 var Schema = mongoose.Schema
 
-let QuestionSchema = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    difficulty: {
-        type: String,
-        required: true
-    },
-    topic: {
-        type: String,
-        required: true
-    }
-});
-
 let HistoryModelSchema = new Schema({
     userName: {
         type: String,
@@ -34,8 +19,13 @@ let HistoryModelSchema = new Schema({
         type: String,
         required: true
     },
-    questions: {
-        type: [QuestionSchema]
+    lastAttempt: {
+        type: Date,
+        required: true
+    },
+    question: {
+        type: String,
+        required: true
     }
 });
 
