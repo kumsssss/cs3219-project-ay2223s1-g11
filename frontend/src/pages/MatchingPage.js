@@ -56,9 +56,10 @@ const MatchingPage = () => {
                     difficultyLevel: user.difficultyLevel,
                 });
             } else if (user.difficultyLevel == null) {
+                console.log("finding match for topic")
                 findMatchWithTopic({
                     username: user.username,
-                    difficultyLevel: user.topic,
+                    topic: user.topic,
                 });
             } else {
                 alert("Invalid Matching Request")
