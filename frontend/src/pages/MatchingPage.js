@@ -52,12 +52,12 @@ const MatchingPage = () => {
         if (user && !matchState.isPending) {
 
             if (user.topic == null) {
-                findMatch({
+                findMatchWithDifficulty({
                     username: user.username,
                     difficultyLevel: user.difficultyLevel,
                 });
             } else if (user.difficultyLevel == null) {
-                findMatch({
+                findMatchWithTopic({
                     username: user.username,
                     difficultyLevel: user.topic,
                 });
