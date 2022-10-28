@@ -8,17 +8,10 @@ export async function getQuestion(room_id, difficulty) {
     return res.data.question;
 }
 
-export async function getRandomQuestion(room_id) {
-    // TODO: handle data
-    const res = await axios.get(QUESTION_SERVICE_ENDPOINT + `/random`, { params: { room: room_id } });
-    console.log(res.data.question);
-    return res.data.question;
-}
-
 export async function getAllTopics() {
     const res = await axios.get(QUESTION_SERVICE_ENDPOINT + `/topics`);
-    console.log(res.data.question);
-    return res.data.question;
+    console.log(res.data);
+    return res.data.topics;
 }
 
 export async function getQuestionByTopic(topic) {
