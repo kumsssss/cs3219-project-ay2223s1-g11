@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
+import Editor from "../components/Editor";
 import { useChatService } from "../hooks/useChatService";
 import { getQuestion } from "../services/QuestionService";
 
-import Editor from "../components/Editor";
+let isLeaving = false;
 
 function CollaborationPage() {
     const { user, setUser } = useContext(UserContext);
@@ -36,6 +37,13 @@ function CollaborationPage() {
         console.log("question in collab:", question);
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+        if (isLeaving) {
+            navigate("/home");
+        }
+    }, [user]);
+
     const { exitChat } = useChatService();
 
     let navigate = useNavigate();
@@ -45,31 +53,40 @@ function CollaborationPage() {
             return {
                 ...prevState,
                 room: null,
+                hasSelectedDifficulty: false,
+                difficultyLevel: null,
             };
         });
-        setQuestion(null);
         localStorage.removeItem("question");
-        navigate("/home");
+        isLeaving = true;
     };
+
+    // Popup when user closes the tab
+    useEffect(() => {
+        const handleTabClose = event => {
+          event.preventDefault();
+    
+          console.log('beforeunload event triggered');
+    
+          return (event.returnValue = 'Are you sure you want to exit?');
+        };
+    
+        window.addEventListener('beforeunload', handleTabClose);
+    
+        return () => {
+          window.removeEventListener('beforeunload', handleTabClose);
+        };
+      }, []);
 
     return (
         user && (
             <Box padding="1%">
                 <Grid container justifyContent="flex-end">
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={handleLeave}
-                    >
+                    <Button variant="outlined" color="error" onClick={handleLeave}>
                         Leave
                     </Button>
                 </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="stretch"
-                >
+                <Grid container direction="row" justifyContent="center" alignItems="stretch">
                     <Grid item={true} xs={4} padding="1%">
                         <Typography variant="h3">Question</Typography>
                         <h2>{question.title}</h2>
