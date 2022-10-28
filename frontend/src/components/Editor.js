@@ -139,8 +139,6 @@ const Editor = () => {
     };
 
     useEffect(() => {
-        initCollabEditorMode(editorState.editorMode);
-
         // Runs when the component unmounts
         return () => disconnect();
     }, []);
@@ -156,7 +154,9 @@ const Editor = () => {
     }, [collabState.pushState]);
 
     useEffect(() => {
-        if (editorState.modePlaceholder !== collabState.editorMode) {
+        if (collabState.editorMode === null) {
+            initCollabEditorMode(editorState.modePlaceholder)
+        } else if (editorState.modePlaceholder !== collabState.editorMode) {
             setOpenToast(true);
             setEditorState((prevState) => {
                 return {
