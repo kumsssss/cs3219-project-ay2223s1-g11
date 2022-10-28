@@ -203,7 +203,6 @@ const Editor = () => {
                 <Select
                     labelId="editor-font-size-label"
                     id="editor-font-size-select"
-                    defaultValue=""
                     value={editorState.fontSize}
                     label="Font size"
                     onChange={changeFontSize}
