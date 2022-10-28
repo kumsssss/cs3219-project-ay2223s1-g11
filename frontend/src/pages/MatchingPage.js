@@ -45,7 +45,7 @@ const MatchingPage = () => {
 
     // Runs when the component unmounts
     useEffect(() => {
-        return disconnect;
+        return () => disconnect();
     }, []);
 
     useEffect(() => {
