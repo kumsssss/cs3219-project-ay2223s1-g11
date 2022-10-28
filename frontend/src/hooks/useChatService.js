@@ -34,8 +34,7 @@ export const useChatService = () => {
     };
 
     const exitChat = () => {
-        socket.emit("quit", { user: chatState.name, room: chatState.room });
-        console.log("removing chat socket...");
+        socket.emit("quit", { user: user.username, room: user.room });
     };
 
     useEffect(() => {

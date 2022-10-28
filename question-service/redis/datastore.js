@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 const client = redis.createClient({
     host: `${process.env.REDIS_URI}`,
-    port: 6379
+    port: 6380
 })
 // await client.connect()
 
