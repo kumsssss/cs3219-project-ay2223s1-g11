@@ -19,8 +19,12 @@ export const useMatchingService = ({
     error: null
   });
 
-  const findMatch = ({username, difficultyLevel}) => {
-    socketRef.current.emit("findMatch", {username, difficultyLevel});
+  const findMatchWithDifficulty = ({username, difficultyLevel}) => {
+    socketRef.current.emit("findMatch", {username, difficultyLevel, topic: null});
+  };
+
+  const findMatchWithTopic = ({username, topic}) => {
+    socketRef.current.emit("findMatch", {username, difficultyLevel: null, topic});
   };
 
   const disconnect = () => {
@@ -97,5 +101,5 @@ export const useMatchingService = ({
     return () => socket.disconnect();
   }, [enabled, onConnected, onDisconnected]);
 
-  return { findMatch, disconnect, matchState };
+  return { findMatchWithDifficulty, findMatchWithTopic, disconnect, matchState };
 };
