@@ -30,7 +30,7 @@ export const matchController = (io, socket) => {
             await handleInvalidMatchFail(
                 io,
                 socket,
-                "At least difficulty Level of topic level must exist"
+                "At least difficulty Level or topic must exist"
             );
             return;
         }

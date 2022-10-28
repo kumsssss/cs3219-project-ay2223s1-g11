@@ -9,7 +9,7 @@ export const ormCreatePendingMatch = async (
     inputTopic
 ) => {
     if (inputDifficultyLevel === null && inputTopic === null) {
-        throw new Error("Pending Match: both difficulty level and topic.");
+        throw new Error("Pending Match: both difficulty level and topic are missing.");
     }
 
     let difficultyLevel = null;
