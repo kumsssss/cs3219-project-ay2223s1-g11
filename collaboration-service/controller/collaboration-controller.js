@@ -1,4 +1,3 @@
-import { VM } from "vm2";
 import {
     assignRoom,
     createRoom,
@@ -7,7 +6,6 @@ import {
     incrementUserCount,
     isRoomCreated,
 } from "../redis/datastore.js";
-const vm = new VM();
 
 /**
  * Handles the logic of collaborating within a room.
@@ -30,9 +28,8 @@ export const collaborationController = (io, socket) => {
         socket.to(roomId).emit("incommingChanges", { data });
     });
 
-    socket.on("runJavascript", async ({ roomId, data }) => {
-        const output = await run(data);
-        socket.to(roomId).emit("evaluatedOutput", output);
+    socket.on("pushEditorMode", async ({ roomId, data }) => {
+        socket.to(roomId).emit("incommingEditorMode", { data });
     });
 
     socket.on("disconnect", async () => {
@@ -42,13 +39,4 @@ export const collaborationController = (io, socket) => {
         }
         console.log(`IO: Socket with id: ${socket.id} disconnected`);
     });
-};
-
-const run = async (data) => {
-    try {
-        const evaluated = await vm.run(data);
-        return { data: String(evaluated), error: null };
-    } catch (e) {
-        return { data: null, error: e.message };
-    }
 };
