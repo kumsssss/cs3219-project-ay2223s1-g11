@@ -3,23 +3,8 @@ import { MatchInfo } from "./match-info-model.js";
 export const ormCreateMatchInfo = async (
     inputUsernameOne,
     inputUsernameTwo,
-    inputDifficultyLevel,
-    inputTopic
+    inputFilterKey
 ) => {
-    if (inputDifficultyLevel === null && inputTopic === null) {
-        throw new Error("Match Info: both difficulty level and topic.");
-    }
-
-    let difficultyLevel = null;
-    if (inputDifficultyLevel !== null) {
-        difficultyLevel = inputDifficultyLevel.toLowerCase();
-    }
-
-    let topic = null;
-    if (inputTopic !== null) {
-        topic = inputTopic.toLowerCase();
-    }
-
     let usernameOne = inputUsernameOne;
     let usernameTwo = inputUsernameTwo;
     if (inputUsernameOne.localeCompare(inputUsernameTwo) == 0) {
@@ -30,12 +15,13 @@ export const ormCreateMatchInfo = async (
         usernameTwo = inputUsernameOne;
     }
 
+    const filterKey = inputFilterKey.toLowerCase();
+
     try {
         const newMatchInfo = await new MatchInfo({
             usernameOne,
             usernameTwo,
-            difficultyLevel,
-            topic,
+            filterKey,
         });
         await newMatchInfo.save();
         return true;

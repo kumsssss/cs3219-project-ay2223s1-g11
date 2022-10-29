@@ -3,103 +3,103 @@ import { io } from "socket.io-client";
 import { MATCHING_SERVICE_ENDPOINT } from "../constants";
 
 export const useMatchingService = ({
-  enabled,
-  onConnected,
-  onDisconnected,
+    enabled,
+    onConnected,
+    onDisconnected,
 }) => {
-  const socketRef = useRef();
+    const socketRef = useRef();
 
-  // State can be simplified
-  const [matchState, setMatchState] = useState({
-    hasConnected: false,
-    isPending: false,
-    hasFailed: false,
-    isSuccess: false,
-    roomId: null,
-    error: null
-  });
-
-  const findMatchWithDifficulty = ({username, difficultyLevel}) => {
-    socketRef.current.emit("findMatch", {username, difficultyLevel, topic: null});
-  };
-
-  const findMatchWithTopic = ({username, topic}) => {
-    socketRef.current.emit("findMatch", {username, difficultyLevel: null, topic});
-  };
-
-  const disconnect = () => {
-    socketRef.current.disconnect();
-  };
-
-  const updateOnConnected = () => {
-    setMatchState((prevState) => {
-      return { ...prevState, hasConnected: true };
-    });
-  };
-
-  const updateOnDisconnected = () => {
-    setMatchState((prevState) => {
-      return { ...prevState, hasConnected: false };
-    });
-  };
-
-  const updateOnMatchSuccess = (roomId) => {
-    setMatchState((prevState) => {
-      return {
-        ...prevState,
+    // State can be simplified
+    const [matchState, setMatchState] = useState({
+        hasConnected: false,
         isPending: false,
-        isSuccess: true,
         hasFailed: false,
-        roomId,
-      };
-    });
-  };
-
-  const updateOnMatchFail = (error) => {
-    setMatchState((prevState) => {
-      return {
-        ...prevState,
-        isPending: false,
         isSuccess: false,
-        hasFailed: true,
-        error,
-      };
-    });
-  };
-
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    const socket = io(MATCHING_SERVICE_ENDPOINT);
-
-    socket.on("connected", () => {
-      updateOnConnected();
-      if (onConnected) {
-        onConnected();
-      }
+        roomId: null,
+        error: null,
     });
 
-    socket.on("disconnect", () => {
-      updateOnDisconnected();
-      if (onDisconnected) {
-        onDisconnected();
-      }
-    });
+    const findMatch = ({ username, filterKey }) => {
+        socketRef.current.emit("findMatch", { username, filterKey });
+    };
 
-    socket.on("matchSuccess", ({roomId}) => {
-      updateOnMatchSuccess(roomId);
-    });
+    const disconnect = () => {
+        socketRef.current.disconnect();
+    };
 
-    socket.on("matchFail", ({error}) => {
-      updateOnMatchFail(error);
-    });
+    const updateOnConnected = () => {
+        setMatchState((prevState) => {
+            return { ...prevState, hasConnected: true };
+        });
+    };
 
-    socketRef.current = socket;
+    const updateOnDisconnected = () => {
+        setMatchState((prevState) => {
+            return { ...prevState, hasConnected: false };
+        });
+    };
 
-    return () => socket.disconnect();
-  }, [enabled, onConnected, onDisconnected]);
+    const updateOnMatchSuccess = (roomId) => {
+        setMatchState((prevState) => {
+            return {
+                ...prevState,
+                isPending: false,
+                isSuccess: true,
+                hasFailed: false,
+                roomId,
+            };
+        });
+    };
 
-  return { findMatchWithDifficulty, findMatchWithTopic, disconnect, matchState };
+    const updateOnMatchFail = (error) => {
+        setMatchState((prevState) => {
+            return {
+                ...prevState,
+                isPending: false,
+                isSuccess: false,
+                hasFailed: true,
+                error,
+            };
+        });
+    };
+
+    useEffect(() => {
+        if (!enabled) {
+            return;
+        }
+
+        const socket = io(MATCHING_SERVICE_ENDPOINT);
+
+        socket.on("connected", () => {
+            updateOnConnected();
+            if (onConnected) {
+                onConnected();
+            }
+        });
+
+        socket.on("disconnect", () => {
+            updateOnDisconnected();
+            if (onDisconnected) {
+                onDisconnected();
+            }
+        });
+
+        socket.on("matchSuccess", ({ roomId }) => {
+            updateOnMatchSuccess(roomId);
+        });
+
+        socket.on("matchFail", ({ error }) => {
+            updateOnMatchFail(error);
+        });
+
+        socketRef.current = socket;
+
+        return () => socket.disconnect();
+    }, [enabled, onConnected, onDisconnected]);
+
+    return {
+        findMatch,
+        disconnect,
+        matchState,
+    };
 };
