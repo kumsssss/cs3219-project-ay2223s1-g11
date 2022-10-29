@@ -25,5 +25,6 @@ app.use('/api/user', router).all((_, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
 })
 
+var port = process.env.PORT || 8000;
 
-app.listen(8000, () => console.log('user-service listening on port 8000'));
+app.listen(port, () => console.log(`user-service listening on port ${port}`));
