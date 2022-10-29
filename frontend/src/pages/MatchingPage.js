@@ -19,7 +19,7 @@ const TIMER_INTERVAL = 5;
 
 const MatchingPage = () => {
     const navigate = useNavigate();
-    const { findMatchWithDifficulty, findMatchWithTopic, disconnect, matchState } = useMatchingService({
+    const { findMatch, disconnect, matchState } = useMatchingService({
         enabled: true,
     });
     const { user, setUser } = useContext(UserContext);
@@ -50,23 +50,22 @@ const MatchingPage = () => {
 
     useEffect(() => {
         if (user && !matchState.isPending) {
-
-            if (user.topic == null) {
-                findMatchWithDifficulty({
+            if (user.difficultyLevel !== null) {
+                findMatch({
                     username: user.username,
-                    difficultyLevel: user.difficultyLevel,
+                    filterKey: user.difficultyLevel,
                 });
-            } else if (user.difficultyLevel == null) {
-                findMatchWithTopic({
+            } else if (user.topic !== null) {
+                findMatch({
                     username: user.username,
-                    difficultyLevel: user.topic,
+                    filterKey: user.topic,
                 });
             } else {
-                alert("Invalid Matching Request")
-                navigate("/select");
+                alert("Invalid Matching Request");
+                navigate("/home");
             }
         } else {
-            alert("Please login again")
+            alert("Please login again");
             navigate("/login");
         }
     }, [user]);
