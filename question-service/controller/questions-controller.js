@@ -72,7 +72,7 @@ export async function viewQuestionByDifficulty(req, res) {
 export async function viewQuestionByTopic(req, res) {
     try {
         let topic = req.params.topic;
-        let room = req.body.room;
+        let room = req.query.room;
         if (!room) {
             return res
                 .status(404)

@@ -7,7 +7,7 @@ import { UserContext } from "../contexts/UserContext";
 import Chat from "../components/Chat";
 import Editor from "../components/Editor";
 import { useChatService } from "../hooks/useChatService";
-import { getQuestion } from "../services/QuestionService";
+import { getQuestion, getQuestionByTopic } from "../services/QuestionService";
 
 let isLeaving = false;
 
@@ -24,7 +24,11 @@ function CollaborationPage() {
     }, []);
 
     async function fetchQuestion() {
-        await getQuestion(user.room, user.difficultyLevel).then((qn) => setQuestion(qn));
+        if (user.topic !== null) {
+            await getQuestionByTopic(user.room, user.topic).then((qn) => setQuestion(qn));
+        } else if (user.difficultyLevel !== null) {
+            await getQuestion(user.room, user.difficultyLevel).then((qn) => setQuestion(qn));
+        }
     }
 
     useEffect(() => {
@@ -53,30 +57,13 @@ function CollaborationPage() {
             return {
                 ...prevState,
                 room: null,
-                hasSelectedDifficulty: false,
                 difficultyLevel: null,
+                topic: null
             };
         });
         localStorage.removeItem("question");
         isLeaving = true;
     };
-
-    // Popup when user closes the tab
-    useEffect(() => {
-        const handleTabClose = event => {
-          event.preventDefault();
-    
-          console.log('beforeunload event triggered');
-    
-          return (event.returnValue = 'Are you sure you want to exit?');
-        };
-    
-        window.addEventListener('beforeunload', handleTabClose);
-    
-        return () => {
-          window.removeEventListener('beforeunload', handleTabClose);
-        };
-      }, []);
 
     return (
         user && (

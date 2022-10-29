@@ -31,7 +31,7 @@ function LoginPage() {
         if (localStorage.getItem("user") !== null) {
             navigate("/home");
         }
-    })
+    });
 
     const handleLogin = async () => {
         try {
@@ -39,7 +39,12 @@ function LoginPage() {
             if (res && res.status === STATUS_CODE_SUCCESS) {
                 setJwt(res.data.token);
                 setSuccessDialog("Account login successful");
-                const userDetails = { username: username, hasSelectedDifficulty: false, difficultyLevel: null, room: null };
+                const userDetails = {
+                    username: username,
+                    difficultyLevel: null,
+                    topic: null,
+                    room: null,
+                };
                 setUser(userDetails);
                 localStorage.setItem("user", JSON.stringify(userDetails));
                 navigate("/home");

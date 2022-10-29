@@ -15,7 +15,7 @@ export async function getAllTopics() {
 }
 
 export async function getQuestionByTopic(room_id, topic) {
-    const res = await axios.get(QUESTION_SERVICE_ENDPOINT + `/topics/` + topic, { params: { room: room_id } });
+    const res = await axios.get(QUESTION_SERVICE_ENDPOINT + `/topics/${topic}`, { params: { room: room_id } });
     console.log(res.data.question);
     return res.data.question;
 }

@@ -12,7 +12,6 @@ const SelectDiffcultyPage = () => {
         setUser((prevState) => {
             return {
                 ...prevState,
-                hasSelectedDifficulty: true,
                 difficultyLevel: e.target.value,
             };
         });
