@@ -15,4 +15,6 @@ app.get("/", (req, res) => {
 
 app.use('/api', apiRoutes);
 
-app.listen(8002, () => console.log('Question service listening on port 8002'));
+var port = process.env.PORT || 8002;
+
+app.listen(port, () => console.log(`Question service listening on port ${port}`));
