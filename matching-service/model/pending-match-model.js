@@ -16,13 +16,9 @@ export const PendingMatch = sequelize.define("PendingMatch", {
         allowNull: false,
         unique: true,
     },
-    difficultyLevel: {
+    filterKey: {
         type: DataTypes.STRING,
-        allowNull: true,
-    },
-    topic: {
-        type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
 });
 
