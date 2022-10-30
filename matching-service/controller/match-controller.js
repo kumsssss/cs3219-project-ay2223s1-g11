@@ -2,8 +2,7 @@ import {
     ormCreatePendingMatch as _createPendingMatch,
     ormDeletePendingMatch as _deletePendingMatch,
     ormDeleteIfPedningMatchExists as _deleteIfPendingMatchExists,
-    ormGetMatchWithDifficulty as _getMatchWithDifficulty,
-    ormGetMatchWithTopic as _getMatchWithTopic,
+    ormGetMatchWithFilterKey as _getMatchWithFilterKey,
 } from "../model/pending-match-orm.js";
 
 import { ormCreateMatchInfo as _createMatchInfo } from "../model/match-info-orm.js";
@@ -17,26 +16,18 @@ export const TIMEOUT_INTERVAL = 5000;
 export const matchController = (io, socket) => {
     console.log(`IO: Socket with id: ${socket.id} connected`);
 
-    socket.on("findMatch", async ({ username, difficultyLevel, topic }) => {
-        if (topic === undefined) {
-            topic = null;
-        }
-
-        if (difficultyLevel === undefined) {
-            difficultyLevel = null;
-        }
-
-        if (topic == null && difficultyLevel == null) {
+    socket.on("findMatch", async ({ username, filterKey }) => {
+        if (!username || !filterKey) {
             await handleInvalidMatchFail(
                 io,
                 socket,
-                "At least difficulty Level or topic must exist"
+                "Invalid matching request"
             );
             return;
         }
 
         const { hasFoundMatch, partnerUsername, partnerSocketId } =
-            await findPendingMatch(username, difficultyLevel, topic);
+            await findPendingMatch(username, filterKey);
 
         if (hasFoundMatch) {
             await handleMatchSuccess(
@@ -45,15 +36,13 @@ export const matchController = (io, socket) => {
                 username,
                 partnerUsername,
                 partnerSocketId,
-                difficultyLevel,
-                topic
+                filterKey
             );
         } else {
             const { isCreated, error } = await createPendingMatch(
                 username,
                 socket.id,
-                difficultyLevel,
-                topic
+                filterKey
             );
             if (isCreated) {
                 handleTimeoutMatchFail(io, socket, username);
@@ -70,14 +59,9 @@ export const matchController = (io, socket) => {
     });
 };
 
-const createPendingMatch = async (
-    username,
-    socketId,
-    difficultyLevel,
-    topic
-) => {
+const createPendingMatch = async (username, socketId, filterKey) => {
     try {
-        await _createPendingMatch(username, socketId, difficultyLevel, topic);
+        await _createPendingMatch(username, socketId, filterKey);
         return { isCreated: true, error: null };
     } catch (err) {
         console.log(err);
@@ -95,23 +79,11 @@ const deletePendingMatch = async (socketId) => {
 };
 
 /**
- * Returns a match with topic if exists else return null.
+ * Returns a match with filterKey if exists else return null.
  */
-const findPendingMatch = async (username, difficultyLevel, topic) => {
+const findPendingMatch = async (username, filterKey) => {
     try {
-        let match = null;
-        if (difficultyLevel == null) {
-            match = await _getMatchWithTopic(username, topic);
-        }
-
-        if (topic == null) {
-            match = await _getMatchWithDifficulty(username, difficultyLevel);
-        }
-
-        if (match === null) {
-            return { hasFoundMatch: false };
-        }
-
+        const match = await _getMatchWithFilterKey(username, filterKey);
         return {
             hasFoundMatch: true,
             partnerUsername: match.dataValues.username,
@@ -127,19 +99,9 @@ const findPendingMatch = async (username, difficultyLevel, topic) => {
     }
 };
 
-const createMatchInfo = async (
-    firstUsername,
-    secondUsername,
-    difficultyLevel,
-    topic
-) => {
+const createMatchInfo = async (firstUsername, secondUsername, filterKey) => {
     try {
-        await _createMatchInfo(
-            firstUsername,
-            secondUsername,
-            difficultyLevel,
-            topic
-        );
+        await _createMatchInfo(firstUsername, secondUsername, filterKey);
         return { isCreated: true, error: null };
     } catch (err) {
         console.log(err);
@@ -165,8 +127,7 @@ const handleMatchSuccess = async (
     username,
     partnerUsername,
     partnerSocketId,
-    difficultyLevel,
-    topic
+    filterKey
 ) => {
     const roomId = createRoomId(username, partnerUsername);
 
@@ -179,7 +140,7 @@ const handleMatchSuccess = async (
         roomId,
     });
 
-    createMatchInfo(username, partnerUsername, difficultyLevel, topic);
+    createMatchInfo(username, partnerUsername, filterKey);
 };
 
 const handleErrorMatchFail = async (io, socket, error) => {

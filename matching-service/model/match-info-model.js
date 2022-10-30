@@ -14,13 +14,9 @@ export const MatchInfo = sequelize.define("MatchInfo", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    difficultyLevel: {
+    filterKey: {
         type: DataTypes.STRING,
-        allowNull: true,
-    },
-    topic: {
-        type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
 });
 

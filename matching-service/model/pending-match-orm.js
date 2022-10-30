@@ -5,29 +5,14 @@ import { PendingMatch } from "./pending-match-model.js";
 export const ormCreatePendingMatch = async (
     username,
     socketId,
-    inputDifficultyLevel,
-    inputTopic
+    inputFilterKey
 ) => {
-    if (inputDifficultyLevel === null && inputTopic === null) {
-        throw new Error("Pending Match: both difficulty level and topic are missing.");
-    }
-
-    let difficultyLevel = null;
-    if (inputDifficultyLevel !== null) {
-        difficultyLevel = inputDifficultyLevel.toLowerCase();
-    }
-
-    let topic = null;
-    if (inputTopic !== null) {
-        topic = inputTopic.toLowerCase();
-    }
-
+    const filterKey = inputFilterKey.toLowerCase();
     try {
         const newPendingMatch = await new PendingMatch({
             username,
             socketId,
-            difficultyLevel,
-            topic,
+            filterKey,
         });
         await newPendingMatch.save();
         return true;
@@ -54,18 +39,19 @@ export const ormDeletePendingMatch = async (socketId) => {
 };
 
 /**
- * Returns First Pending match with desired difficulty level but not equal to the given username
+ * Returns First Pending match with desired filterKey but not equal to the given username
  * and deletes returns the pending match.
  */
-export const ormGetMatchWithDifficulty = async (username, difficultyLevel) => {
+export const ormGetMatchWithFilterKey = async (username, inputfilterKey) => {
     try {
+        const filterKey = inputfilterKey.toLowerCase();
         const result = await sequelize.transaction(async (t) => {
             const match = await PendingMatch.findOne(
                 {
                     attributes: ["username", "socketId"],
                     order: sequelize.col("createdAt"),
                     where: {
-                        difficultyLevel,
+                        filterKey,
                         username: {
                             [Op.ne]: username,
                         },
@@ -91,51 +77,7 @@ export const ormGetMatchWithDifficulty = async (username, difficultyLevel) => {
         return result;
     } catch (err) {
         console.log(
-            `DB Error: Query to find Pending match with difficulty level: ${difficultyLevel} failed`
-        );
-        console.log(err);
-        return { err };
-    }
-};
-
-/**
- * Returns First Pending match with desired topic but not equal to the given username
- * and deletes returns the pending match.
- */
-export const ormGetMatchWithTopic = async (username, topic) => {
-    try {
-        const result = await sequelize.transaction(async (t) => {
-            const match = await PendingMatch.findOne(
-                {
-                    attributes: ["username", "socketId"],
-                    order: sequelize.col("createdAt"),
-                    where: {
-                        topic,
-                        username: {
-                            [Op.ne]: username,
-                        },
-                    },
-                },
-                { transaction: t }
-            );
-            if (match) {
-                await PendingMatch.destroy(
-                    {
-                        where: {
-                            username: match.dataValues.username,
-                        },
-                    },
-                    { transaction: t }
-                );
-            }
-
-            return match;
-        });
-
-        return result;
-    } catch (err) {
-        console.log(
-            `DB Error: Query to find Pending match with topic: ${topic} failed`
+            `DB Error: Query to find Pending match with filterKey: ${inputfilterKey.toLowerCase()} failed`
         );
         console.log(err);
         return { err };
