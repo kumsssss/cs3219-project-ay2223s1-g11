@@ -5,8 +5,10 @@ const ROOM_PREFIX = "room:";
 const SOCKET_PREFIX = "socket:";
 
 const client = redis.createClient({
-    host: `${process.env.REDIS_URI}`,
-    port: 6379,
+    host: `${process.env.CLOUD_REDIS_URL}`,
+    port: `${process.env.CLOUD_REDIS_PORT}`,
+    username: `${process.env.CLOUD_REDIS_USERNAME}`,
+    password: `${process.env.CLOUD_REDIS_PASSWORD}`
 });
 
 await client.connect();

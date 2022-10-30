@@ -25,4 +25,6 @@ const io = new Server(httpServer, {
 });
 io.on("connection", (socket) => collaborationController(io, socket));
 
-httpServer.listen(8008);
+var port = process.env.PORT || 8008;
+
+httpServer.listen(port);
