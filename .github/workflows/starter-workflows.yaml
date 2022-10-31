@@ -34,12 +34,6 @@ jobs:
           npm i
           npm run build --if-present
 
-      - name: Build frontend microservice
-        working-directory: ./frontend
-        run: |
-          npm i
-          npm run build --if-present
-
       - name: Build history microservice
         working-directory: ./history-service
         run: |
@@ -71,10 +65,6 @@ jobs:
       - name: Generate deployment package [Collaboration microservice]
         working-directory: ./collaboration-service
         run: zip -r deployment.zip * -x "**node_modules**" ".env" "package-lock.json"
-
-      - name: Generate deployment package [Frontend microservice]
-        working-directory: ./frontend
-        run: zip -r deployment.zip * -x "**node_modules**" "package-lock.json"
 
       - name: Generate deployment package [History microservice]
         working-directory: ./history-service
@@ -126,19 +116,7 @@ jobs:
           environment_name: "Cs3219project-env-collab"
           region: "ap-southeast-1"
           version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
-          deployment_package: ./collaboration-service/deployment.zip
-        
-
-      - name: Beanstalk Deploy for frontend microservice
-        uses: einaregilsson/beanstalk-deploy@v10
-        with:
-          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
-          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
-          application_name: "CS3219-Project"
-          environment_name: "prod"
-          region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
-          deployment_package: ./frontend/deployment.zip          
+          deployment_package: ./collaboration-service/deployment.zip       
 
       - name: Beanstalk Deploy for history microservice
         uses: einaregilsson/beanstalk-deploy@v10
