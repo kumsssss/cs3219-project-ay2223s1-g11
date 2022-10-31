@@ -48,6 +48,15 @@ jobs:
           replace-with: '-'
           flags: 'g'
 
+      - uses: hkusu/s3-upload-action@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: 'ap-southeast-1'
+          aws-bucket: 'cs3219-project-bucket'
+          destination-dir: '/'
+          file-path: './chat-service/deployment.zip'  
+
       - name: Beanstalk Deploy for chat microservice
         uses: einaregilsson/beanstalk-deploy@v10
         with:
