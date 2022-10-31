@@ -21,7 +21,62 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
+        working-directory: ./chat-service
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./collaboration-service
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./frontend
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./history-service
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./matching-service
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./question-service
+      - run: npm i
+      - run: npm run build --if-present
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        working-directory: ./user-service
+      - run: npm i
       - run: npm run build --if-present
 
       - name: Generate deployment package [Chat microservice]
