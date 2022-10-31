@@ -3,12 +3,9 @@ import "dotenv/config";
 
 const ROOM_PREFIX = "room:";
 const SOCKET_PREFIX = "socket:";
-
+const url = `redis://${process.env.CLOUD_REDIS_USERNAME}:${process.env.CLOUD_REDIS_PASSWORD}@${process.env.CLOUD_REDIS_URL}:${process.env.CLOUD_REDIS_PORT}`;
 const client = redis.createClient({
-    host: `${process.env.CLOUD_REDIS_URL}`,
-    port: `${process.env.CLOUD_REDIS_PORT}`,
-    username: `${process.env.CLOUD_REDIS_USERNAME}`,
-    password: `${process.env.CLOUD_REDIS_PASSWORD}`
+   url
 });
 
 await client.connect();

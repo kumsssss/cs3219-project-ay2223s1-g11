@@ -7,7 +7,8 @@ const client = redis.createClient({
     username: `${process.env.CLOUD_REDIS_USERNAME}`,
     password: `${process.env.CLOUD_REDIS_PASSWORD}`
 })
-// await client.connect()
+
+console.log(client)
 
 client.on('error', err => {
     console.log('Error ' + err);
