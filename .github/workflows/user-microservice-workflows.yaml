@@ -52,6 +52,7 @@ jobs:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
           aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
           application_name: "CS3219-Project"
+          environment_name: "Cs3219project-env-user"
           existing_bucket_name: "cs3219-project-bucket"
           region: "ap-southeast-1"
           version_label: "CS3219-Project-user-${{ steps.format-time.outputs.replaced }}"
