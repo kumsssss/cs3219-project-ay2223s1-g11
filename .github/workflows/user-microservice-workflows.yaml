@@ -47,7 +47,7 @@ jobs:
           flags: 'g'       
 
       - name: Beanstalk Deploy for user microservice
-        uses: einaregilsson/beanstalk-deploy@v10
+        uses: einaregilsson/beanstalk-deploy@v18
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
           aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
