@@ -27,4 +27,4 @@ io.on("connection", (socket) => collaborationController(io, socket));
 
 var port = process.env.PORT || 8008;
 
-httpServer.listen(port);
+httpServer.listen(port, () => console.log(`collaboration-service listening on port ${port}`));

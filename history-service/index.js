@@ -15,4 +15,6 @@ app.get("/", (req, res) => {
 
 app.use('/api', apiRoutes);
 
-app.listen(8003, () => console.log('History service listening on port 8003'));
+var port = process.env.PORT || 8003;
+
+app.listen(port, () => console.log(`History service listening on port ${port}`));
