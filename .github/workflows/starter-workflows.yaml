@@ -104,7 +104,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-chat"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-chat-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./chat-service/deployment.zip
 
       - name: Beanstalk Deploy for collaboration microservice
@@ -115,7 +115,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-collab"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-collab-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./collaboration-service/deployment.zip       
 
       - name: Beanstalk Deploy for history microservice
@@ -126,7 +126,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-history"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-history-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./history-service/deployment.zip          
 
       - name: Beanstalk Deploy for matching microservice
@@ -137,7 +137,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-matching"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-matching-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./matching-service/deployment.zip          
 
       - name: Beanstalk Deploy for question microservice
@@ -148,7 +148,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-question"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-question-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./question-service/deployment.zip          
 
       - name: Beanstalk Deploy for user microservice
@@ -159,7 +159,7 @@ jobs:
           application_name: "CS3219-Project"
           environment_name: "Cs3219project-env-user"
           region: "ap-southeast-1"
-          version_label: "CS3219-Project-${{ steps.format-time.outputs.replaced }}"
+          version_label: "CS3219-Project-user-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./user-service/deployment.zip   
 
       - name: Deployed!
