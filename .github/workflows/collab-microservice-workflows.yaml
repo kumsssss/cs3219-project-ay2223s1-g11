@@ -49,10 +49,10 @@ jobs:
         uses: shallwefootball/s3-upload-action@master
         id: S3
         with:
-        aws_key_id: ${{secrets.AWS_ACCESS_KEY}}
-        aws_secret_access_key: ${{secrets.AWS_SECRET_KEY}}
-        aws_bucket: "cs3219-project-bucket"
-        source_dir: ./collaboration-service/deployment.zip
+          aws_key_id: ${{secrets.AWS_ACCESS_KEY}}
+          aws_secret_access_key: ${{secrets.AWS_SECRET_KEY}}
+          aws_bucket: "cs3219-project-bucket"
+          source_dir: ./collaboration-service/deployment.zip
 
       - name: Beanstalk Deploy for collaboration microservice
         uses: einaregilsson/beanstalk-deploy@v10
