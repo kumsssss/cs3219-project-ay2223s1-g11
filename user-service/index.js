@@ -11,7 +11,9 @@ app.options('*', cors())
 const router = express.Router()
 
 // Controller will contain all the User-defined Routes
-router.get('/', (_, res) => res.send('Hello World from user-service'))
+router.get("/", (req, res) => {
+    res.send("Hello World from user-service");
+});
 router.post('/', createUser)
 router.post('/login', loginUser)
 router.post('/token', validateUserToken)
