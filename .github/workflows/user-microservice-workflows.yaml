@@ -47,11 +47,12 @@ jobs:
           flags: 'g'       
 
       - name: Beanstalk Deploy for user microservice
-        uses: einaregilsson/beanstalk-deploy@v10
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
           aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
-          bucket_name: "cs3219-project-bucket"
+          application_name: "CS3219-Project"
+          existing_bucket_name: "cs3219-project-bucket"
           region: "ap-southeast-1"
           version_label: "CS3219-Project-user-${{ steps.format-time.outputs.replaced }}"
           deployment_package: ./user-service/deployment.zip   
