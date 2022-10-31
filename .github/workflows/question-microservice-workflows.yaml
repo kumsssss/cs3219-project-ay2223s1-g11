@@ -1,0 +1,62 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ test-deployment ]
+    paths:
+      - 'question-service/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build question microservice
+        working-directory: ./question-service
+        run: |
+          npm i
+          npm run build --if-present
+
+      - name: Generate deployment package [Question microservice]
+        working-directory: ./question-service
+        run: zip -r deployment.zip * -x "**node_modules**" ".env" "package-lock.json"
+
+      - name: Get timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run string replace
+        uses: frabert/replace-string-action@master
+        id: format-time
+        with:
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: '-'
+          flags: 'g'
+      
+      - name: Beanstalk Deploy for question microservice
+        uses: einaregilsson/beanstalk-deploy@v10
+        with:
+          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
+          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
+          application_name: "CS3219-Project"
+          environment_name: "Cs3219project-env-question"
+          region: "ap-southeast-1"
+          version_label: "CS3219-Project-question-${{ steps.format-time.outputs.replaced }}"
+          deployment_package: ./question-service/deployment.zip          
+
+      - name: Deployed!
+        run: echo App deployed to EL
