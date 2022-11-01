@@ -39,7 +39,7 @@ jobs:
 
       - name: Build user microservice
         run: |
-          ls -a
+          ls -a ../
           npm i
           npm run build --if-present
           npm run start
