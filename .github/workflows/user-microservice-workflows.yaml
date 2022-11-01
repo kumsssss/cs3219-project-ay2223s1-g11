@@ -4,7 +4,6 @@ on:
   push:
     branches: [ test-deployment ]
     paths:
-      - 'user-service/**'
   pull_request:
     branches: [ main ]
 
