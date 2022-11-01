@@ -23,6 +23,19 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: 'Create env file'
+        working-directory: ./user-service
+        run: |
+          touch .env
+          echo DB_CLOUD_URI=${{ secrets.USER_SERVICE_DB_URL }} >> .env
+          echo CLOUD_REDIS_URL=${{ secrets.USER_SERVICE_REDIS_URL }} >> .env
+          echo CLOUD_REDIS_PORT=${{ secrets.USER_SERVICE_REDIS_PORT }} >> .env
+          echo CLOUD_REDIS_USERNAME=${{ secrets.USER_SERVICE_REDIS_USERNAME }} >> .env
+          echo CLOUD_REDIS_PASSWORD=${{ secrets.USER_SERVICE_REDIS_PASSWORD }} >> .env
+          echo ENV="PROD" >> .env
+          echo PORT="8080" >> .env
+          cat .env
+
       - name: Build user microservice
         working-directory: ./user-service
         run: |
