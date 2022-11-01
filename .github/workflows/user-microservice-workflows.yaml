@@ -39,6 +39,7 @@ jobs:
       - name: Build user microservice
         working-directory: ./user-service
         run: |
+          ls -a
           npm i
           npm run build --if-present
           npm run start
