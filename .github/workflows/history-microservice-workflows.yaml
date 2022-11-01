@@ -54,18 +54,7 @@ jobs:
           aws-region: 'ap-southeast-1'
           aws-bucket: 'cs3219-project-bucket'
           destination-dir: '/'
-          file-path: './history-service/deployment.zip'  
-
-      - name: Beanstalk Deploy for history microservice
-        uses: einaregilsson/beanstalk-deploy@v10
-        with:
-          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
-          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
-          application_name: "CS3219-Project"
-          environment_name: "Cs3219project-env-history"
-          region: "ap-southeast-1"
-          version_label: "CS3219-Project-history-${{ steps.format-time.outputs.replaced }}"
-          deployment_package: ./history-service/deployment.zip          
+          file-path: './history-service/deployment.zip'        
 
       - name: Deployed!
         run: echo App deployed to EL

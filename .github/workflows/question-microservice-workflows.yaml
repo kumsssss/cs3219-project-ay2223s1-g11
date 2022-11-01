@@ -56,16 +56,5 @@ jobs:
           destination-dir: '/'
           file-path: './question-service/deployment.zip'  
 
-      - name: Beanstalk Deploy for question microservice
-        uses: einaregilsson/beanstalk-deploy@v10
-        with:
-          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
-          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
-          application_name: "CS3219-Project"
-          environment_name: "Cs3219project-env-question"
-          region: "ap-southeast-1"
-          version_label: "CS3219-Project-question-${{ steps.format-time.outputs.replaced }}"
-          deployment_package: ./question-service/deployment.zip          
-
       - name: Deployed!
         run: echo App deployed to EL

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import {changePassword, createUser, loginUser, logoutUser, validateUserToken, deleteUser} from './controller/user-controller.js';
+import {changePassword, createUser, loginUser, logoutUser, deleteUser} from './controller/user-controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -11,7 +11,7 @@ app.options('*', cors())
 const router = express.Router()
 
 // Controller will contain all the User-defined Routes
-router.get("/", (req, res) => {
+app.get("/", (req, res) => {
     res.send("Hello World from user-service");
 });
 router.post('/', createUser)
