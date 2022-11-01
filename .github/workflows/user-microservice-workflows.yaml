@@ -38,6 +38,7 @@ jobs:
         working-directory: ./user-service
         run: |
           ls -a ../
+          cat ../.env
           npm i
           npm run build --if-present
           npm run start
