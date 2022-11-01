@@ -42,7 +42,6 @@ jobs:
           mv ../.env .
           npm i
           npm run build --if-present
-          npm run start
 
       - name: Generate deployment package [User microservice]
         run: zip -r deployment.zip * -x "**node_modules**" ".env" "package-lock.json"
