@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { createUser, loginUser, logoutUser, validateUserToken, deleteUser} from './controller/user-controller.js';
+import { changePassword, createUser, loginUser, logoutUser, validateUserToken, deleteUser} from './controller/user-controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
