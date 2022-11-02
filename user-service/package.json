@@ -7,8 +7,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "mocha test/*.js --exit",
-    "build": "node index.js --exit"
+    "test": "mocha test/test.js --exit"
   },
   "keywords": [],
   "author": "",
