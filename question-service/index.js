@@ -18,3 +18,5 @@ app.use('/api', apiRoutes);
 var port = process.env.PORT || 8002;
 
 app.listen(port, () => console.log(`Question service listening on port ${port}`));
+
+export default app;

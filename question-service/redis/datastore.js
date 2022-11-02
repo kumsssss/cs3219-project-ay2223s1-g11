@@ -8,8 +8,6 @@ const client = redis.createClient({
     password: `${process.env.CLOUD_REDIS_PASSWORD}`
 })
 
-console.log(client)
-
 client.on('error', err => {
     console.log('Error ' + err);
 });
