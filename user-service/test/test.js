@@ -15,11 +15,12 @@ describe("Users", () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');
+                    res.text.should.eql("Hello World from user-service")
                     done();
                 });
         });
     });
-
+});
     // describe("POST /api/user", () => {
     //     // Test to add user record
     //     it("should add user record", (done) => {
@@ -93,4 +94,3 @@ describe("Users", () => {
     //             });
     //     });
     // });
-});
