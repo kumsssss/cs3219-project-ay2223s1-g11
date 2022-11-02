@@ -5,14 +5,15 @@ on:
     branches: [ test-deployment ]
     paths:
       - 'collaboration-service/**'
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
 
     runs-on: macos-latest
-
+    defaults:
+      run:
+        working-directory: ./collaboration-service
+        
     strategy:
       matrix:
         node-version: [16.x]
@@ -24,28 +25,23 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Build collaboration microservice
-        working-directory: ./collaboration-service
+      - name: Create .env file
+        uses: ozaytsev86/create-env-file@v1
+        with:
+          ENV_CLOUD_REDIS_URL: ${{ secrets.COLLAB_SERVICE_REDIS_URL }}
+          ENV_CLOUD_REDIS_PORT: ${{ secrets.COLLAB_SERVICE_REDIS_PORT }}
+          ENV_CLOUD_REDIS_USERNAME: ${{ secrets.COLLAB_SERVICE_REDIS_USERNAME }}
+          ENV_CLOUD_REDIS_PASSWORD: ${{ secrets.COLLAB_SERVICE_REDIS_PASSWORD }}
+          ENV_PORT: "8080"
+
+      - name: Build and Test collaboration microservice
         run: |
+          mv ../.env .
           npm i
-          npm run build --if-present
+          npm run test --if-present
 
       - name: Generate deployment package [Collaboration microservice]
-        working-directory: ./collaboration-service
         run: zip -r deployment.zip * -x "**node_modules**" ".env" "package-lock.json"
-
-      - name: Get timestamp
-        uses: gerred/actions/current-time@master
-        id: current-time
-
-      - name: Run string replace
-        uses: frabert/replace-string-action@master
-        id: format-time
-        with:
-          pattern: '[:\.]+'
-          string: "${{ steps.current-time.outputs.time }}"
-          replace-with: '-'
-          flags: 'g'
 
       - uses: hkusu/s3-upload-action@v2
         with:
@@ -53,6 +49,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'ap-southeast-1'
           aws-bucket: 'cs3219-project-bucket'
+          bucket-root: '/'
           destination-dir: '/'
           file-path: './collaboration-service/deployment.zip'  
 
