@@ -24,7 +24,7 @@ const io = new Server(httpServer, {
   },
 });
 
-io.on("connection", (socket) => {chatController(io, socket)})
+io.on("connection", (socket) => {chatController(io, socket)});
  
 httpServer.listen(8080);
 
