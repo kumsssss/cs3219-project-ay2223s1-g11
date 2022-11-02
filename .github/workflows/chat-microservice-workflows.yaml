@@ -39,6 +39,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'ap-southeast-1'
           aws-bucket: 'cs3219-project-bucket'
+          bucket-root: '/'
           destination-dir: '/'
           file-path: './chat-service/deployment.zip'  
 

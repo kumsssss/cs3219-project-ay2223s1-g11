@@ -15,7 +15,7 @@ const httpServer = createServer(app);
 
 app.get("/", (req, res) => {
   res.send("Hello World from chat-service")
-})
+});
 
 // socket.io config
 const io = new Server(httpServer, {
