@@ -18,3 +18,5 @@ app.use('/api', apiRoutes);
 var port = process.env.PORT || 8003;
 
 app.listen(port, () => console.log(`History service listening on port ${port}`));
+
+export default app;
