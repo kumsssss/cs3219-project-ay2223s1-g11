@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1", 
+    "test": "mocha test/*.js --exit",
     "build": "node index.js --exit"
   },
   "keywords": [],
@@ -18,10 +18,13 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^10.1.0",
     "mongoose": "^6.4.5",
     "redis": "^4.3.1"
   }
