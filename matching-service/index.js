@@ -29,3 +29,5 @@ io.on("connection", (socket) => matchController(io, socket));
 const port = process.env.PORT || 8001;
 
 httpServer.listen(port, () => console.log(`Matching service listening on port ${port}`));
+
+export default app;
